@@ -1,0 +1,54 @@
+{
+  "name": "recommended-actions",
+  "version": "0.1.0",
+  "description": "recommended-actions",
+  "main": "./src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=production node ./src/server",
+    "dev": "nodemon ./src/server",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky install",
+    "test": "jest",
+    "test:coverage": "jest --coverage --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ndani-Technologies/recommended-actions.git"
+  },
+  "author": "MM",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Ndani-Technologies/recommended-actions/issues"
+  },
+  "homepage": "https://github.com/Ndani-Technologies/recommended-actions#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "helmet": "^6.0.1",
+    "mongoose": "^7.1.0",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.5.0",
+    "@commitlint/config-conventional": "^17.4.4",
+    "eslint": "^8.36.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "lint-staged": "^13.2.0",
+    "nodemon": "^2.0.22",
+    "prettier": "2.8.7"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --cache --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  }
+}
