@@ -1,8 +1,10 @@
 /* eslint-disable import/extensions */
 import app from "./app.js";
 import connectDB from "./configs/db.js";
-import env from "./configs/dev.js";
+import env from "./configs/index.js";
 import logger from "./middleware/logger.js";
+
+// const env = require("./configs/index");
 
 const { host, port, dbUrl } = env;
 
