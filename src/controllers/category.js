@@ -1,13 +1,15 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import Category from "../models/category.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const Category = require("../models/category");
+const asyncHandler = require("../middleware/async");
+const ErrorResponse = require("../utils/error-response");
 
 const getCategories = asyncHandler(async (req, res, next) => {
   try {
     const category = await Category.find({});
-    res.status(200).json({ success: true, data: category });
+    res
+      .status(200)
+      .json({ success: true, message: "categories retrieved", data: category });
     logger.info(`get all category`);
   } catch (error) {
     next(error);
@@ -20,8 +22,8 @@ const createCategory = asyncHandler(async (req, res, next) => {
     if (category) {
       res.status(200).json({
         success: true,
-        data: category,
         message: "category created successfully",
+        data: category,
       });
       logger.info(`category created`);
     } else {
@@ -42,10 +44,12 @@ const getCategory = asyncHandler(async (req, res, next) => {
 
     if (!category) {
       logger.info(`category not found with id ${categoryId}`);
-      next(new ErrorResponse(`No category with id ${categoryId}`, 404));
+      res.status(200).json({ success: true, message: "categories not found " });
     } else {
       logger.info(`category found with id ${categoryId}`);
-      res.status(200).json({ success: true, data: category });
+      res
+        .status(200)
+        .json({ success: true, message: "categories found ", data: category });
     }
   } catch (error) {
     next(error);
@@ -104,7 +108,7 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
   }
 });
 
-export {
+module.exports = {
   getCategories,
   createCategory,
   getCategory,

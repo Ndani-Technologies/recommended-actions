@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const WeightSchema = new mongoose.Schema({
   language: {
@@ -12,4 +12,5 @@ const WeightSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("weight", WeightSchema);
+const Weight = mongoose.model("weight", WeightSchema);
+module.exports = Weight;

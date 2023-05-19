@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const TimescaleSchema = new mongoose.Schema({
   language: {
@@ -12,4 +12,5 @@ const TimescaleSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("timescale", TimescaleSchema);
+const Timescale = mongoose.model("timescale", TimescaleSchema);
+module.exports = Timescale;

@@ -1,17 +1,15 @@
 /* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createCost,
-  deleteCost,
-  getCost,
-  getCosts,
-  updateCost,
-} from "../controllers/cost.js";
+const CostRouter = express.Router();
+const CostController = require("../controllers/cost");
 
-const router = express.Router();
+CostRouter.route("/")
+  .get(CostController.getCosts)
+  .post(CostController.createCost);
+CostRouter.route("/:id")
+  .get(CostController.getCost)
+  .patch(CostController.updateCost)
+  .delete(CostController.deleteCost);
 
-router.route("/").get(getCosts).post(createCost);
-router.route("/:id").get(getCost).patch(updateCost).delete(deleteCost);
-
-export default router;
+module.exports = CostRouter;

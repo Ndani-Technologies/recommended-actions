@@ -1,13 +1,15 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import Cost from "../models/cost.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const Cost = require("../models/cost");
+const asyncHandler = require("../middleware/async");
+const ErrorResponse = require("../utils/error-response");
 
 const getCosts = asyncHandler(async (req, res, next) => {
   try {
     const cost = await Cost.find({});
-    res.status(200).json({ success: true, data: cost });
+    res
+      .status(200)
+      .json({ success: true, message: "cost retrieved", data: cost });
     logger.info(`get all cost`);
   } catch (error) {
     next(error);
@@ -20,8 +22,8 @@ const createCost = asyncHandler(async (req, res, next) => {
     if (cost) {
       res.status(200).json({
         success: true,
-        data: cost,
         message: "cost created successfully",
+        data: cost,
       });
       logger.info(`cost created`);
     } else {
@@ -42,10 +44,12 @@ const getCost = asyncHandler(async (req, res, next) => {
 
     if (!cost) {
       logger.info(`cost not found with id ${costId}`);
-      next(new ErrorResponse(`No cost with id ${costId}`, 404));
+      res.status(200).json({ success: false, message: "cost not found " });
     } else {
       logger.info(`cost found with id ${costId}`);
-      res.status(200).json({ success: true, data: cost });
+      res
+        .status(200)
+        .json({ success: true, message: "cost found ", data: cost });
     }
   } catch (error) {
     next(error);
@@ -104,4 +108,4 @@ const deleteCost = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { getCosts, createCost, getCost, updateCost, deleteCost };
+module.exports = { getCosts, createCost, getCost, updateCost, deleteCost };

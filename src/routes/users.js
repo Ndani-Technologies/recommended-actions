@@ -1,17 +1,15 @@
-/* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  getUsers,
-  updateUser,
-} from "../controllers/users.js";
+const UserController = require("../controllers/users");
 
-const router = express.Router();
+const UserRouter = express.Router();
 
-router.route("/").get(getUsers).post(createUser);
-router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+UserRouter.get("/", UserController.getUsers).post(
+  "/",
+  UserController.createUser
+);
+UserRouter.get("/:id", UserController.getUser)
+  .patch("/:id", UserController.updateUser)
+  .delete("/:id", UserController.deleteUser);
 
-export default router;
+module.exports = UserRouter;

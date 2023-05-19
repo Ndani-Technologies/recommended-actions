@@ -3,7 +3,8 @@ const dev = require("../configs/index");
 
 let redisClient;
 const connectClient = async () => {
-  redisClient = redis.createClient(dev.redisUrl);
+  console.log(process.env.REDIS_URL);
+  redisClient = redis.createClient(process.env.REDIS_URL);
   await redisClient.connect();
 };
 

@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import Potential from "../models/potential.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const Potential = require("../models/potential");
+const asyncHandler = require("../middleware/async");
+const ErrorResponse = require("../utils/error-response");
 
 const getPotentials = asyncHandler(async (req, res, next) => {
   try {
@@ -104,7 +104,7 @@ const deletePotential = asyncHandler(async (req, res, next) => {
   }
 });
 
-export {
+module.exports = {
   getPotentials,
   createPotential,
   getPotential,

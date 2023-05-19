@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import User from "../models/users.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const User = require("../models/users");
+const asyncHandler = require("../middleware/async");
+const ErrorResponse = require("../utils/error-response");
 
 const getUsers = asyncHandler(async (req, res, next) => {
   try {
@@ -104,4 +104,4 @@ const deleteUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { getUsers, createUser, getUser, updateUser, deleteUser };
+module.exports = { getUsers, createUser, getUser, updateUser, deleteUser };

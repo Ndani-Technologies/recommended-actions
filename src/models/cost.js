@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const CostSchema = new mongoose.Schema({
   language: {
@@ -12,4 +12,5 @@ const CostSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("cost", CostSchema);
+const Cost = mongoose.model("cost", CostSchema);
+module.exports = Cost;

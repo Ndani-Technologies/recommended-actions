@@ -1,13 +1,7 @@
-// eslint-disable-next-line import/no-import-module-exports
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 const devEnv = {
   host: process.env.HOST || "localhost",
   port: process.env.PORT || 5000,
   secrectKey: process.env.SECRET_KEY,
-
   dbUrl: process.env.MONGO_URL,
   mongoUrl: process.env.MONGO_URL,
   mongoUrlRemote: process.env.MONGO_URL_REMOTE,
@@ -22,4 +16,4 @@ const devEnv = {
   entity: process.env.ENTITY,
 };
 
-export default devEnv;
+module.exports = devEnv;

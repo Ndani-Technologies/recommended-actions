@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const PotentialSchema = new mongoose.Schema({
   language: {
@@ -12,4 +12,5 @@ const PotentialSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("potential", PotentialSchema);
+const Potential = mongoose.model("potential", PotentialSchema);
+module.exports = Potential;

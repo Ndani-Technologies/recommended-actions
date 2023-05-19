@@ -1,13 +1,18 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import ActionStep from "../models/actionSteps.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const ActionStep = require("../models/actionSteps");
+const asyncHandler = require("../middleware/async");
 
 const getactionSteps = asyncHandler(async (req, res, next) => {
   try {
     const actionsteps = await ActionStep.find({});
-    res.status(200).json({ success: true, data: actionsteps });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "get all actionsteps",
+        data: actionsteps,
+      });
     logger.info(`get all actionsteps`);
   } catch (error) {
     next(error);
@@ -20,8 +25,8 @@ const createactionSteps = asyncHandler(async (req, res, next) => {
     if (actionsteps) {
       res.status(200).json({
         success: true,
-        data: actionsteps,
         message: "actionstep created successfully",
+        data: actionsteps,
       });
       logger.info(`actionstep created`);
     } else {
@@ -42,10 +47,16 @@ const getactionStep = asyncHandler(async (req, res, next) => {
 
     if (!actionstep) {
       logger.info(`actionstep not found with id ${actionstepId}`);
-      next(new ErrorResponse(`No actionstep with id ${actionstepId}`, 404));
+      res.status(404).json({ success: false, message: "No action step Found" });
     } else {
       logger.info(`actionstep found with id ${actionstepId}`);
-      res.status(200).json({ success: true, data: actionstep });
+      res
+        .status(200)
+        .json({
+          success: true,
+          message: "actionstep found with given Id",
+          data: actionstep,
+        });
     }
   } catch (error) {
     next(error);
@@ -104,7 +115,7 @@ const deleteactionSteps = asyncHandler(async (req, res, next) => {
   }
 });
 
-export {
+module.exports = {
   getactionSteps,
   createactionSteps,
   getactionStep,

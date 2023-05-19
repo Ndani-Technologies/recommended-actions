@@ -1,21 +1,16 @@
-/* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createactionSteps,
-  deleteactionSteps,
-  getactionStep,
-  getactionSteps,
-  updateactionSteps,
-} from "../controllers/actionsteps.js";
+const actionstepRouter = express.Router();
+const actionstepController = require("../controllers/actionsteps");
 
-const router = express.Router();
-
-router.route("/").get(getactionSteps).post(createactionSteps);
-router
+actionstepRouter
+  .route("/")
+  .get(actionstepController.getactionSteps)
+  .post(actionstepController.createactionSteps);
+actionstepRouter
   .route("/:id")
-  .get(getactionStep)
-  .patch(updateactionSteps)
-  .delete(deleteactionSteps);
+  .get(actionstepController.getactionStep)
+  .patch(actionstepController.updateactionSteps)
+  .delete(actionstepController.deleteactionSteps);
 
-export default router;
+module.exports = actionstepRouter;

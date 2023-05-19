@@ -1,17 +1,17 @@
 /* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createWeight,
-  deleteWeight,
-  getWeight,
-  getWeights,
-  updateWeight,
-} from "../controllers/weight.js";
+const weightRouter = express.Router();
+const weightController = require("../controllers/weight");
 
-const router = express.Router();
+weightRouter
+  .route("/")
+  .get(weightController.getWeights)
+  .post(weightController.createWeight);
+weightRouter
+  .route("/:id")
+  .get(weightController.getWeight)
+  .patch(weightController.updateWeight)
+  .delete(weightController.deleteWeight);
 
-router.route("/").get(getWeights).post(createWeight);
-router.route("/:id").get(getWeight).patch(updateWeight).delete(deleteWeight);
-
-export default router;
+module.exports = weightRouter;

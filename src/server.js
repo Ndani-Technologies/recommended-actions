@@ -1,23 +1,6 @@
-/* eslint-disable import/extensions */
-import app from "./app.js";
-import connectDB from "./configs/db.js";
-import env from "./configs/index.js";
-import logger from "./middleware/logger.js";
+const env = require("./configs/index");
+const logger = require("./middleware/logger");
+const app = require("./app");
 
-// const env = require("./configs/index");
-
-const { host, port, dbUrl } = env;
-
-(async () => {
-  try {
-    await connectDB(dbUrl);
-    logger.info("✌️  DB loaded and connected!");
-
-    app.listen(
-      port,
-      logger.info(`🚀 listening to requests on ${host}:${port}`)
-    );
-  } catch (error) {
-    logger.error(error.stack);
-  }
-})();
+const { HOST, PORT } = process.env;
+app.listen(PORT, logger.info(`🚀 listening to requests on ${HOST}:${PORT}`));

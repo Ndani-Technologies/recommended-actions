@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
-import logger from "../middleware/logger.js";
-import Weight from "../models/weight.js";
-import asyncHandler from "../middleware/async.js";
-import ErrorResponse from "../utils/error-response.js";
+const logger = require("../middleware/logger");
+const Weight = require("../models/weight");
+const asyncHandler = require("../middleware/async");
+const ErrorResponse = require("../utils/error-response");
 
 const getWeights = asyncHandler(async (req, res, next) => {
   try {
@@ -104,4 +104,10 @@ const deleteWeight = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { getWeights, createWeight, getWeight, updateWeight, deleteWeight };
+module.exports = {
+  getWeights,
+  createWeight,
+  getWeight,
+  updateWeight,
+  deleteWeight,
+};

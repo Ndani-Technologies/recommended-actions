@@ -1,21 +1,15 @@
 /* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createPotential,
-  deletePotential,
-  getPotential,
-  getPotentials,
-  updatePotential,
-} from "../controllers/potential.js";
+const PotentialRouter = express.Router();
+const PotentialController = require("../controllers/potential");
 
-const router = express.Router();
+PotentialRouter.route("/")
+  .get(PotentialController.getPotentials)
+  .post(PotentialController.createPotential);
+PotentialRouter.route("/:id")
+  .get(PotentialController.getPotential)
+  .patch(PotentialController.updatePotential)
+  .delete(PotentialController.deletePotential);
 
-router.route("/").get(getPotentials).post(createPotential);
-router
-  .route("/:id")
-  .get(getPotential)
-  .patch(updatePotential)
-  .delete(deletePotential);
-
-export default router;
+module.exports = PotentialRouter;

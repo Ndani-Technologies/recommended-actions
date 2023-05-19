@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const ActionSteps = new mongoose.Schema(
   {
@@ -37,4 +37,5 @@ const ActionSteps = new mongoose.Schema(
 );
 
 ActionSteps.index({ title: 1 }, { unique: true });
-export default mongoose.model("actionSteps", ActionSteps);
+const actionsteps = mongoose.model("actionSteps", ActionSteps);
+module.exports = actionsteps;

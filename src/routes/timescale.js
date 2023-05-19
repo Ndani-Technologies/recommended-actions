@@ -1,21 +1,15 @@
 /* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createTimescale,
-  deleteTimescale,
-  getTimescale,
-  getTimescales,
-  updateTimescale,
-} from "../controllers/timescale.js";
+const TimescaleRouter = express.Router();
+const TimescaleController = require("../controllers/timescale");
 
-const router = express.Router();
+TimescaleRouter.route("/")
+  .get(TimescaleController.getTimescales)
+  .post(TimescaleController.createTimescale);
+TimescaleRouter.route("/:id")
+  .get(TimescaleController.getTimescale)
+  .patch(TimescaleController.updateTimescale)
+  .delete(TimescaleController.deleteTimescale);
 
-router.route("/").get(getTimescales).post(createTimescale);
-router
-  .route("/:id")
-  .get(getTimescale)
-  .patch(updateTimescale)
-  .delete(deleteTimescale);
-
-export default router;
+module.exports = TimescaleRouter;

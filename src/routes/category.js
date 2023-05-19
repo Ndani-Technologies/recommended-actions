@@ -1,21 +1,15 @@
 /* eslint-disable import/extensions */
-import express from "express";
+const express = require("express");
 
-import {
-  createCategory,
-  deleteCategory,
-  getCategory,
-  getCategories,
-  updateCategory,
-} from "../controllers/category.js";
+const CategoryRouter = express.Router();
+const categoryController = require("../controllers/category");
 
-const router = express.Router();
+CategoryRouter.route("/")
+  .get(categoryController.getCategories)
+  .post(categoryController.createCategory);
+CategoryRouter.route("/:id")
+  .get(categoryController.getCategory)
+  .patch(categoryController.updateCategory)
+  .delete(categoryController.deleteCategory);
 
-router.route("/").get(getCategories).post(createCategory);
-router
-  .route("/:id")
-  .get(getCategory)
-  .patch(updateCategory)
-  .delete(deleteCategory);
-
-export default router;
+module.exports = CategoryRouter;
