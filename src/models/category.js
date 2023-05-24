@@ -9,8 +9,9 @@ const CategorySchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please provide a title"],
+    unique: true,
   },
 });
-
+CategorySchema.index({ title: 1 }, { unique: true });
 const Category = mongoose.model("category", CategorySchema);
 module.exports = Category;

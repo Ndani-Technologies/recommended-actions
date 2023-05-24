@@ -27,14 +27,9 @@ const timescaleRoutes = require("./routes/timescale");
 
 const url = env.mongoUrl;
 const connect = mongoose.connect(url);
-connect.then(
-  () => {
-    console.log("connected Correctly");
-  },
-  (err) => {
-    console.error(err);
-  }
-);
+connect.then(() => {
+  console.log("connected Correctly");
+});
 app.use(
   expresssession({
     secret: env.secrectKey,
@@ -91,7 +86,7 @@ app.use("/api/v1/weights", weightRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/potentials", potentialRoutes);
 app.use("/api/v1/costs", costRoutes);
-app.use("/api/v1/timescale", timescaleRoutes);
+app.use("/api/v1/timescales", timescaleRoutes);
 
 app.use((req, res, next) => {
   const err = new Error();
@@ -108,29 +103,6 @@ app.use((err, req, res, next) => {
     message: err.message || "internal server error",
   });
   next();
-});
-
-// error handler
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  let status = err.status || 500;
-  let message = err.message || "Internal Server Error";
-
-  if (err.name === "MongoServerError" && err.code === 11000) {
-    status = 400;
-    message = "Duplicate key error";
-  } else if (err.name === "ValidationError") {
-    status = 400;
-    message = err.message;
-  }
-
-  res.status(status).json({
-    error: {
-      status,
-      message,
-      success: false,
-    },
-  });
 });
 
 module.exports = app;

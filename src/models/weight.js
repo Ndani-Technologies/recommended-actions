@@ -9,8 +9,9 @@ const WeightSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please provide a title"],
+    unique: true,
   },
 });
-
+WeightSchema.index({ title: 1 }, { unique: true });
 const Weight = mongoose.model("weight", WeightSchema);
 module.exports = Weight;

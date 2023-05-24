@@ -9,8 +9,9 @@ const CostSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please provide a title"],
+    unique: true,
   },
 });
-
+CostSchema.index({ title: 1 }, { unique: true });
 const Cost = mongoose.model("cost", CostSchema);
 module.exports = Cost;

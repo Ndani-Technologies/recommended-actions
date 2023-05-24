@@ -9,8 +9,9 @@ const PotentialSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please provide a title"],
+    unique: true,
   },
 });
-
+PotentialSchema.index({ title: 1 }, { unique: true });
 const Potential = mongoose.model("potential", PotentialSchema);
 module.exports = Potential;
