@@ -7,8 +7,9 @@ const ErrorResponse = require("../utils/error-response");
 const getWeights = asyncHandler(async (req, res, next) => {
   try {
     const weight = await Weight.find({});
-    res.status(200).json({ success: true, data: weight });
-    logger.info(`get all weight`);
+    res
+      .status(200)
+      .json({ success: true, message: "all weights retrieved", data: weight });
   } catch (error) {
     next(error);
   }
@@ -23,12 +24,10 @@ const createWeight = asyncHandler(async (req, res, next) => {
         data: weight,
         message: "weight created successfully",
       });
-      logger.info(`weight created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`weight not created`);
     }
   } catch (error) {
     next(error);
@@ -41,11 +40,11 @@ const getWeight = asyncHandler(async (req, res, next) => {
     const weight = await Weight.findOne({ _id: req.params.id });
 
     if (!weight) {
-      logger.info(`weight not found with id ${weightId}`);
-      next(new ErrorResponse(`No weight with id ${weightId}`, 404));
+      res.status(404).json({ success: false, message: "weight not found" });
     } else {
-      logger.info(`weight found with id ${weightId}`);
-      res.status(200).json({ success: true, data: weight });
+      res
+        .status(200)
+        .json({ success: true, message: "weight found", data: weight });
     }
   } catch (error) {
     next(error);
@@ -64,7 +63,7 @@ const updateWeight = asyncHandler(async (req, res, next) => {
         if (weights) {
           res.status(200).json({
             success: true,
-            message: `weight updated with id ${req.params.id}`,
+            message: `weight updated `,
           });
         } else {
           res
@@ -75,7 +74,7 @@ const updateWeight = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No weight found with id ${req.params.id}`,
+        message: `No weight found `,
       });
     }
   } catch (error) {
@@ -90,13 +89,13 @@ const deleteWeight = asyncHandler(async (req, res, next) => {
       await Weight.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete weight with id ${req.params.id}`,
+          message: `Delete weight `,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `weight not found with id ${req.params.id}`,
+        message: `weight not found `,
       });
     }
   } catch (error) {

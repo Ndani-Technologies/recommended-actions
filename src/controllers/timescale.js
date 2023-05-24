@@ -7,8 +7,13 @@ const ErrorResponse = require("../utils/error-response");
 const getTimescales = asyncHandler(async (req, res, next) => {
   try {
     const timescale = await Timescale.find({});
-    res.status(200).json({ success: true, data: timescale });
-    logger.info(`get all timescale`);
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "all timescales retrieved",
+        data: timescale,
+      });
   } catch (error) {
     next(error);
   }
@@ -23,12 +28,10 @@ const createTimescale = asyncHandler(async (req, res, next) => {
         data: timescale,
         message: "timescale created successfully",
       });
-      logger.info(`timescale created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`timescale not created`);
     }
   } catch (error) {
     next(error);
@@ -41,11 +44,11 @@ const getTimescale = asyncHandler(async (req, res, next) => {
     const timescale = await Timescale.findOne({ _id: req.params.id });
 
     if (!timescale) {
-      logger.info(`timescale not found with id ${timescaleId}`);
-      next(new ErrorResponse(`No timescale with id ${timescaleId}`, 404));
+      res.status(404).json({ success: false, message: "no timescale found" });
     } else {
-      logger.info(`timescale found with id ${timescaleId}`);
-      res.status(200).json({ success: true, data: timescale });
+      res
+        .status(200)
+        .json({ success: true, message: "timescales found", data: timescale });
     }
   } catch (error) {
     next(error);
@@ -64,7 +67,7 @@ const updateTimescale = asyncHandler(async (req, res, next) => {
         if (timescales) {
           res.status(200).json({
             success: true,
-            message: `timescale updated with id ${req.params.id}`,
+            message: `timescale updated `,
           });
         } else {
           res
@@ -75,7 +78,7 @@ const updateTimescale = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No timescale found with id ${req.params.id}`,
+        message: `No timescale found`,
       });
     }
   } catch (error) {
@@ -90,13 +93,13 @@ const deleteTimescale = asyncHandler(async (req, res, next) => {
       await Timescale.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete timescale with id ${req.params.id}`,
+          message: `Delete timescale `,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `timescale not found with id ${req.params.id}`,
+        message: `timescale not found `,
       });
     }
   } catch (error) {

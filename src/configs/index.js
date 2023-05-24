@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const devEnv = {
   host: process.env.HOST || "localhost",
   port: process.env.PORT || 5000,

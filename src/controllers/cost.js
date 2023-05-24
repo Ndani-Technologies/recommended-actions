@@ -10,7 +10,6 @@ const getCosts = asyncHandler(async (req, res, next) => {
     res
       .status(200)
       .json({ success: true, message: "cost retrieved", data: cost });
-    logger.info(`get all cost`);
   } catch (error) {
     next(error);
   }
@@ -25,12 +24,10 @@ const createCost = asyncHandler(async (req, res, next) => {
         message: "cost created successfully",
         data: cost,
       });
-      logger.info(`cost created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`cost not created`);
     }
   } catch (error) {
     next(error);
@@ -41,12 +38,9 @@ const getCost = asyncHandler(async (req, res, next) => {
   try {
     const { id: costId } = req.params;
     const cost = await Cost.findOne({ _id: req.params.id });
-
     if (!cost) {
-      logger.info(`cost not found with id ${costId}`);
       res.status(200).json({ success: false, message: "cost not found " });
     } else {
-      logger.info(`cost found with id ${costId}`);
       res
         .status(200)
         .json({ success: true, message: "cost found ", data: cost });
@@ -68,7 +62,7 @@ const updateCost = asyncHandler(async (req, res, next) => {
         if (costs) {
           res.status(200).json({
             success: true,
-            message: `cost updated with id ${req.params.id}`,
+            message: `cost updated `,
           });
         } else {
           res
@@ -79,7 +73,7 @@ const updateCost = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No cost found with id ${req.params.id}`,
+        message: `No cost found `,
       });
     }
   } catch (error) {
@@ -94,13 +88,13 @@ const deleteCost = asyncHandler(async (req, res, next) => {
       await Cost.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete cost with id ${req.params.id}`,
+          message: `Delete cost `,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `cost not found with id ${req.params.id}`,
+        message: `cost not found `,
       });
     }
   } catch (error) {

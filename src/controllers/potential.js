@@ -7,8 +7,13 @@ const ErrorResponse = require("../utils/error-response");
 const getPotentials = asyncHandler(async (req, res, next) => {
   try {
     const potential = await Potential.find({});
-    res.status(200).json({ success: true, data: potential });
-    logger.info(`get all potential`);
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "all potentials retrieved",
+        data: potential,
+      });
   } catch (error) {
     next(error);
   }
@@ -23,12 +28,10 @@ const createPotential = asyncHandler(async (req, res, next) => {
         data: potential,
         message: "potential created successfully",
       });
-      logger.info(`potential created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`potential not created`);
     }
   } catch (error) {
     next(error);
@@ -41,11 +44,11 @@ const getPotential = asyncHandler(async (req, res, next) => {
     const potential = await Potential.findOne({ _id: req.params.id });
 
     if (!potential) {
-      logger.info(`potential not found with id ${potentialId}`);
-      next(new ErrorResponse(`No potential with id ${potentialId}`, 404));
+      res.status(404).json({ success: false, message: "No potential found" });
     } else {
-      logger.info(`potential found with id ${potentialId}`);
-      res.status(200).json({ success: true, data: potential });
+      res
+        .status(200)
+        .json({ success: true, message: "Potential found", data: potential });
     }
   } catch (error) {
     next(error);
@@ -64,7 +67,7 @@ const updatePotential = asyncHandler(async (req, res, next) => {
         if (potentials) {
           res.status(200).json({
             success: true,
-            message: `potential updated with id ${req.params.id}`,
+            message: `potential updated `,
           });
         } else {
           res
@@ -75,7 +78,7 @@ const updatePotential = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No potential found with id ${req.params.id}`,
+        message: `No potential found `,
       });
     }
   } catch (error) {
@@ -90,13 +93,13 @@ const deletePotential = asyncHandler(async (req, res, next) => {
       await Potential.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete potential with id ${req.params.id}`,
+          message: `Delete potential `,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `potential not found with id ${req.params.id}`,
+        message: `potential not found `,
       });
     }
   } catch (error) {

@@ -25,8 +25,7 @@ const potentialRoutes = require("./routes/potential");
 const costRoutes = require("./routes/cost");
 const timescaleRoutes = require("./routes/timescale");
 
-const url = process.env.MONGO_URL;
-
+const url = env.mongoUrl;
 const connect = mongoose.connect(url);
 connect.then(
   () => {
@@ -38,7 +37,7 @@ connect.then(
 );
 app.use(
   expresssession({
-    secret: process.env.SECRET_KEY,
+    secret: env.secrectKey,
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({ mongoUrl: url }),
@@ -63,7 +62,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://${process.env.HOST}/${process.env.PORT}`,
+        url: `http://${env.host}/${env.port}`,
       },
     ],
   },

@@ -6,14 +6,11 @@ const asyncHandler = require("../middleware/async");
 const getactionSteps = asyncHandler(async (req, res, next) => {
   try {
     const actionsteps = await ActionStep.find({});
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "get all actionsteps",
-        data: actionsteps,
-      });
-    logger.info(`get all actionsteps`);
+    res.status(200).json({
+      success: true,
+      message: "get all actionsteps",
+      data: actionsteps,
+    });
   } catch (error) {
     next(error);
   }
@@ -28,12 +25,10 @@ const createactionSteps = asyncHandler(async (req, res, next) => {
         message: "actionstep created successfully",
         data: actionsteps,
       });
-      logger.info(`actionstep created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`actionstep not created`);
     }
   } catch (error) {
     next(error);
@@ -46,17 +41,13 @@ const getactionStep = asyncHandler(async (req, res, next) => {
     const actionstep = await ActionStep.findOne({ _id: req.params.id });
 
     if (!actionstep) {
-      logger.info(`actionstep not found with id ${actionstepId}`);
       res.status(404).json({ success: false, message: "No action step Found" });
     } else {
-      logger.info(`actionstep found with id ${actionstepId}`);
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "actionstep found with given Id",
-          data: actionstep,
-        });
+      res.status(200).json({
+        success: true,
+        message: "actionstep found with given Id",
+        data: actionstep,
+      });
     }
   } catch (error) {
     next(error);
@@ -75,7 +66,7 @@ const updateactionSteps = asyncHandler(async (req, res, next) => {
         if (actionsteps) {
           res.status(200).json({
             success: true,
-            message: `actionstep updated with id ${req.params.id}`,
+            message: `actionstep updated successfully`,
           });
         } else {
           res
@@ -86,7 +77,7 @@ const updateactionSteps = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No actionstep found with id ${req.params.id}`,
+        message: `No actionstep found`,
       });
     }
   } catch (error) {
@@ -101,13 +92,13 @@ const deleteactionSteps = asyncHandler(async (req, res, next) => {
       await ActionStep.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete actionstep with id ${req.params.id}`,
+          message: `Delete actionstep successfully`,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `actionstep not found with id ${req.params.id}`,
+        message: `actionstep not found `,
       });
     }
   } catch (error) {

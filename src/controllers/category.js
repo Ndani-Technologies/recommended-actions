@@ -10,7 +10,6 @@ const getCategories = asyncHandler(async (req, res, next) => {
     res
       .status(200)
       .json({ success: true, message: "categories retrieved", data: category });
-    logger.info(`get all category`);
   } catch (error) {
     next(error);
   }
@@ -25,12 +24,10 @@ const createCategory = asyncHandler(async (req, res, next) => {
         message: "category created successfully",
         data: category,
       });
-      logger.info(`category created`);
     } else {
       res
         .status(404)
         .json({ success: false, message: "internal server error" });
-      logger.info(`category not created`);
     }
   } catch (error) {
     next(error);
@@ -43,10 +40,8 @@ const getCategory = asyncHandler(async (req, res, next) => {
     const category = await Category.findOne({ _id: req.params.id });
 
     if (!category) {
-      logger.info(`category not found with id ${categoryId}`);
       res.status(200).json({ success: true, message: "categories not found " });
     } else {
-      logger.info(`category found with id ${categoryId}`);
       res
         .status(200)
         .json({ success: true, message: "categories found ", data: category });
@@ -68,7 +63,7 @@ const updateCategory = asyncHandler(async (req, res, next) => {
         if (categorys) {
           res.status(200).json({
             success: true,
-            message: `category updated with id ${req.params.id}`,
+            message: `category updated successfully`,
           });
         } else {
           res
@@ -79,7 +74,7 @@ const updateCategory = asyncHandler(async (req, res, next) => {
     } else {
       res.status(404).json({
         success: false,
-        message: `No category found with id ${req.params.id}`,
+        message: `No category found `,
       });
     }
   } catch (error) {
@@ -94,13 +89,13 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
       await Category.findByIdAndDelete(req.params.id).then(async () => {
         res.status(200).json({
           success: true,
-          message: `Delete category with id ${req.params.id}`,
+          message: `Delete category `,
         });
       });
     } else {
       res.status(404).json({
         success: false,
-        message: `category not found with id ${req.params.id}`,
+        message: `category not found `,
       });
     }
   } catch (error) {
