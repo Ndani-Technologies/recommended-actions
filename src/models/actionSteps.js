@@ -26,11 +26,39 @@ const ActionSteps = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Not Started", "In Progress", "Complete"],
+      enum: [
+        "Not Started",
+        "In Progress",
+        "Completed",
+        "Assigned",
+        "Un Assigned",
+        "Attempt",
+      ],
       default: "Not Started",
     },
     feedback: {
       type: String,
+    },
+    assignedTo: [
+      {
+        type: Object,
+      },
+    ],
+    organization: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    startdate: {
+      type: Date,
+      default: Date.now,
+    },
+    enddate: {
+      type: Date,
     },
   },
   { timestamps: true }
