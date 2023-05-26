@@ -10,4 +10,4 @@ connectClient();
 redisClient.on("error", (error) => console.log("redis not connected", error));
 redisClient.on("connect", () => console.log("redis  connected"));
 
-module.exports = { redisClient };
+module.exports = { redisClient, connectClient };

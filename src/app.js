@@ -26,7 +26,9 @@ const costRoutes = require("./routes/cost");
 const timescaleRoutes = require("./routes/timescale");
 
 const url = env.mongoUrl;
+
 const connect = mongoose.connect(url);
+
 connect.then(() => {
   console.log("connected Correctly");
 });

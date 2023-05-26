@@ -28,6 +28,12 @@ actionstepRouter
   .route("/filter/startdate/:startdate/enddate/:enddate")
   .get(actionstepController.getactionStepBetweenDates);
 actionstepRouter
-  .route("/summery/actionsteps")
-  .get(actionstepController.getactionStepSummery);
+  .route("/report/actionsteps")
+  .get(actionstepController.getactionStepReport);
+actionstepRouter
+  .route("/points/totalpoints")
+  .get(actionstepController.getTotalPointsEarned);
+actionstepRouter
+  .route("/summery/adminSummery")
+  .get(actionstepController.getactionStepAdminSummery);
 module.exports = actionstepRouter;

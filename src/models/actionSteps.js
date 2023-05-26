@@ -60,6 +60,10 @@ const ActionSteps = new mongoose.Schema(
     enddate: {
       type: Date,
     },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
+    },
   },
   { timestamps: true }
 );
