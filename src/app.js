@@ -82,15 +82,15 @@ app.use((req, res, next) => {
   logger.info(`[${req.method}] ${req.originalUrl}`);
   next();
 });
-app.use("/api/v1/healthcheck", healthcheckRoute);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/actionsteps", actionStepsRoutes);
-app.use("/api/v1/weights", weightRoutes);
-app.use("/api/v1/categories", categoryRoutes);
-app.use("/api/v1/potentials", potentialRoutes);
-app.use("/api/v1/costs", costRoutes);
-app.use("/api/v1/timescales", timescaleRoutes);
-app.use("/api/v1/relationship", relationshipRoutes);
+app.use("/api/v1/ra/healthcheck", healthcheckRoute);
+app.use("/api/v1/ra/users", userRoutes);
+app.use("/api/v1/ra/actionsteps", actionStepsRoutes);
+app.use("/api/v1/ra/weights", weightRoutes);
+app.use("/api/v1/ra/categories", categoryRoutes);
+app.use("/api/v1/ra/potentials", potentialRoutes);
+app.use("/api/v1/ra/costs", costRoutes);
+app.use("/api/v1/ra/timescales", timescaleRoutes);
+app.use("/api/v1/ra/relationship", relationshipRoutes);
 
 app.use((req, res, next) => {
   const err = new Error();
