@@ -5,7 +5,13 @@ const asyncHandler = require("../middleware/async");
 
 const getactionSteps = asyncHandler(async (req, res, next) => {
   try {
-    const actionsteps = await ActionStep.find({}).populate("categoryId");
+    const actionsteps = await ActionStep.find({}).populate([
+      "categoryId",
+      "costId",
+      "potentialId",
+      "timescaleId",
+      "weightId",
+    ]);
     if (actionsteps && actionsteps.length > 0) {
       res.status(200).json({
         success: true,
@@ -45,7 +51,15 @@ const createactionSteps = asyncHandler(async (req, res, next) => {
 const getactionStep = asyncHandler(async (req, res, next) => {
   try {
     const { id: actionstepId } = req.params;
-    const actionstep = await ActionStep.findOne({ _id: req.params.id });
+    const actionstep = await ActionStep.findOne({
+      _id: req.params.id,
+    }).populate([
+      "categoryId",
+      "costId",
+      "potentialId",
+      "timescaleId",
+      "weightId",
+    ]);
 
     if (!actionstep) {
       res.status(404).json({ success: false, message: "No action step Found" });

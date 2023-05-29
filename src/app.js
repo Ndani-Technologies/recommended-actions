@@ -24,6 +24,7 @@ const categoryRoutes = require("./routes/category");
 const potentialRoutes = require("./routes/potential");
 const costRoutes = require("./routes/cost");
 const timescaleRoutes = require("./routes/timescale");
+const relationshipRoutes = require("./routes/relationship");
 
 const url = env.mongoUrl;
 
@@ -89,6 +90,7 @@ app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/potentials", potentialRoutes);
 app.use("/api/v1/costs", costRoutes);
 app.use("/api/v1/timescales", timescaleRoutes);
+app.use("/api/v1/relationship", relationshipRoutes);
 
 app.use((req, res, next) => {
   const err = new Error();

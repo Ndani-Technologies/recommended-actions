@@ -64,6 +64,22 @@ const ActionSteps = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "category",
     },
+    costId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "cost",
+    },
+    potentialId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "potential",
+    },
+    timescaleId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "timescale",
+    },
+    weightId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "weight",
+    },
   },
   { timestamps: true }
 );
