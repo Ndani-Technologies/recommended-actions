@@ -6,14 +6,43 @@ const ErrorResponse = require("../utils/error-response");
 
 const getRelationships = asyncHandler(async (req, res, next) => {
   try {
-    const relationship = await RelationShip.find({});
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "RelationShip retrieved",
-        data: relationship,
+    const relationship = await RelationShip.find({})
+      .populate("recomendedActionId")
+      .populate({
+        path: "recomendedActionId",
+        populate: [
+          {
+            path: "categoryId",
+            model: "category",
+            // select: 'language titleEng titleAr titleSp titleFr'
+          },
+          {
+            path: "costId",
+            model: "cost",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "potentialId",
+            model: "potential",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "timescaleId",
+            model: "timescale",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "weightId",
+            model: "weight",
+            // select: 'language includeExplanation answerAttempt'
+          },
+        ],
       });
+    res.status(200).json({
+      success: true,
+      message: "RelationShip retrieved",
+      data: relationship,
+    });
   } catch (error) {
     next(error);
   }
@@ -46,13 +75,11 @@ const getRelationship = asyncHandler(async (req, res, next) => {
     if (!relationship) {
       res.status(200).json({ success: true, message: "categories not found " });
     } else {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "categories found ",
-          data: relationship,
-        });
+      res.status(200).json({
+        success: true,
+        message: "categories found ",
+        data: relationship,
+      });
     }
   } catch (error) {
     next(error);

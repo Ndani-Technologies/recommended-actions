@@ -15,9 +15,11 @@ const RelationShips = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
       },
     ],
-    selectCondition: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
+    selectCondition: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+      },
+    ],
     counter: {
       type: Number,
       default: 0,
