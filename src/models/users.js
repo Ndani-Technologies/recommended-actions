@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please provide a name"],
     minlength: [3, "Name cannot be less than 3 characters"],
-    maxlength: [50, "Name cannot be more than 50 characters"],
+    max_length: [50, "Name cannot be more than 50 characters"],
     trim: true,
   },
   email: {
@@ -20,4 +20,6 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("users", UserSchema);
+
+module.exports = User;
