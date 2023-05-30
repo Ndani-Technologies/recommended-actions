@@ -1,10 +1,21 @@
-/* eslint-disable import/extensions */
-const logger = require("../middleware/logger");
+const { redisClient } = require("../middleware/redisClient");
 const ActionStep = require("../models/actionSteps");
 const asyncHandler = require("../middleware/async");
 
+const cacheKey = "ACTIONSTEP";
+
 const getactionSteps = asyncHandler(async (req, res, next) => {
   try {
+    let cache = await redisClient.get(cacheKey);
+    let cacheObj = "";
+    let cacheLength = 0;
+    if (cache != null) {
+      cacheObj = JSON.parse(cache);
+      cacheLength = Object.keys(cacheObj).length;
+    } else {
+      cacheLength = 0;
+      cacheObj = "";
+    }
     const actionsteps = await ActionStep.find({}).populate([
       "categoryId",
       "costId",
@@ -12,16 +23,30 @@ const getactionSteps = asyncHandler(async (req, res, next) => {
       "timescaleId",
       "weightId",
     ]);
-    if (actionsteps && actionsteps.length > 0) {
-      res.status(200).json({
-        success: true,
-        message: "get all actionsteps",
-        data: actionsteps,
-      });
-    } else {
+    if (actionsteps === "") {
       res.status(404).json({
         success: false,
-        message: "no actionsteps found",
+        message: "actionsteps not found",
+      });
+      return;
+    }
+    if (actionsteps.length > cacheLength) {
+      redisClient.set(cacheKey, JSON.stringify(actionsteps));
+      res.status(200).json({
+        success: true,
+        message: "actionsteps found",
+        data: actionsteps,
+      });
+    }
+    if (actionsteps.length <= cacheLength) {
+      redisClient.del(cacheKey);
+      redisClient.set(cacheKey, JSON.stringify(actionsteps));
+      cache = await redisClient.get(cacheKey);
+
+      res.status(200).json({
+        success: true,
+        message: "roles found",
+        data: JSON.parse(cache),
       });
     }
   } catch (error) {
@@ -85,6 +110,15 @@ const updateactionSteps = asyncHandler(async (req, res, next) => {
         { new: true }
       ).then(async (actionsteps) => {
         if (actionsteps) {
+          await redisClient.del(cacheKey);
+          const allActionSteps = await ActionStep.find({}).populate([
+            "categoryId",
+            "costId",
+            "potentialId",
+            "timescaleId",
+            "weightId",
+          ]);
+          await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
           res.status(200).json({
             success: true,
             message: `actionstep updated successfully`,
@@ -111,6 +145,15 @@ const deleteactionSteps = asyncHandler(async (req, res, next) => {
     const actionstep = await ActionStep.findOne({ _id: req.params.id });
     if (actionstep) {
       await ActionStep.findByIdAndDelete(req.params.id).then(async () => {
+        await redisClient.del(cacheKey);
+        const allActionSteps = await ActionStep.find({}).populate([
+          "categoryId",
+          "costId",
+          "potentialId",
+          "timescaleId",
+          "weightId",
+        ]);
+        await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
         res.status(200).json({
           success: true,
           message: `Delete actionstep successfully`,
@@ -427,6 +470,25 @@ const getactionStepAdminSummery = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
+const deleteallactionsteps = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const actionsteps = await ActionStep.deleteMany({ _id: { $in: id } });
+    if (actionsteps) {
+      res.status(200).json({
+        success: true,
+        message: "all actionsteps deleted",
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "internal server error",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = {
   getactionSteps,
   createactionSteps,
@@ -441,4 +503,5 @@ module.exports = {
   getactionStepReport,
   getTotalPointsEarned,
   getactionStepAdminSummery,
+  deleteallactionsteps,
 };

@@ -1,15 +1,48 @@
-/* eslint-disable import/extensions */
-const logger = require("../middleware/logger");
+const { redisClient } = require("../middleware/redisClient");
 const Cost = require("../models/cost");
 const asyncHandler = require("../middleware/async");
-const ErrorResponse = require("../utils/error-response");
+
+const cacheKey = "COST";
 
 const getCosts = asyncHandler(async (req, res, next) => {
   try {
-    const cost = await Cost.find({});
-    res
-      .status(200)
-      .json({ success: true, message: "cost retrieved", data: cost });
+    let cache = await redisClient.get(cacheKey);
+    let cacheObj = "";
+    let cacheLength = 0;
+    if (cache != null) {
+      cacheObj = JSON.parse(cache);
+      cacheLength = Object.keys(cacheObj).length;
+    } else {
+      cacheLength = 0;
+      cacheObj = "";
+    }
+    const costs = await Cost.find({});
+    if (costs === "") {
+      res.status(404).json({
+        success: false,
+        message: "costs not found",
+      });
+      return;
+    }
+    if (costs.length > cacheLength) {
+      redisClient.set(cacheKey, JSON.stringify(costs));
+      res.status(200).json({
+        success: true,
+        message: "costs found",
+        data: costs,
+      });
+    }
+    if (costs.length <= cacheLength) {
+      redisClient.del(cacheKey);
+      redisClient.set(cacheKey, JSON.stringify(costs));
+      cache = await redisClient.get(cacheKey);
+
+      res.status(200).json({
+        success: true,
+        message: "categories found",
+        data: JSON.parse(cache),
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -60,6 +93,9 @@ const updateCost = asyncHandler(async (req, res, next) => {
         { new: true }
       ).then(async (costs) => {
         if (costs) {
+          await redisClient.del(cacheKey);
+          const allCosts = await Cost.find({});
+          await redisClient.set(cacheKey, JSON.stringify(allCosts));
           res.status(200).json({
             success: true,
             message: `cost updated `,
@@ -86,6 +122,9 @@ const deleteCost = asyncHandler(async (req, res, next) => {
     const cost = await Cost.findOne({ _id: req.params.id });
     if (cost) {
       await Cost.findByIdAndDelete(req.params.id).then(async () => {
+        await redisClient.del(cacheKey);
+        const allCosts = await Cost.find({});
+        await redisClient.set(cacheKey, JSON.stringify(allCosts));
         res.status(200).json({
           success: true,
           message: `Delete cost `,
@@ -101,5 +140,30 @@ const deleteCost = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
-
-module.exports = { getCosts, createCost, getCost, updateCost, deleteCost };
+const deleteallCosts = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const costs = await Cost.deleteMany({ _id: { $in: id } });
+    if (costs) {
+      res.status(200).json({
+        success: true,
+        message: "all costs deleted",
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "internal server error",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+module.exports = {
+  getCosts,
+  createCost,
+  getCost,
+  updateCost,
+  deleteCost,
+  deleteallCosts,
+};

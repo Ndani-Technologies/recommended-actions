@@ -13,5 +13,8 @@ weightRouter
   .get(weightController.getWeight)
   .patch(weightController.updateWeight)
   .delete(weightController.deleteWeight);
+weightRouter
+  .route("/delete/deleteall")
+  .delete(weightController.deleteallWeight);
 
 module.exports = weightRouter;

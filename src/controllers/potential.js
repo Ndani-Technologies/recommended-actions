@@ -1,19 +1,48 @@
-/* eslint-disable import/extensions */
-const logger = require("../middleware/logger");
+const { redisClient } = require("../middleware/redisClient");
 const Potential = require("../models/potential");
 const asyncHandler = require("../middleware/async");
-const ErrorResponse = require("../utils/error-response");
+
+const cacheKey = "POTENTIAL";
 
 const getPotentials = asyncHandler(async (req, res, next) => {
   try {
-    const potential = await Potential.find({});
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "all potentials retrieved",
-        data: potential,
+    let cache = await redisClient.get(cacheKey);
+    let cacheObj = "";
+    let cacheLength = 0;
+    if (cache != null) {
+      cacheObj = JSON.parse(cache);
+      cacheLength = Object.keys(cacheObj).length;
+    } else {
+      cacheLength = 0;
+      cacheObj = "";
+    }
+    const potentials = await Potential.find({});
+    if (potentials === "") {
+      res.status(404).json({
+        success: false,
+        message: "potentials not found",
       });
+      return;
+    }
+    if (potentials.length > cacheLength) {
+      redisClient.set(cacheKey, JSON.stringify(potentials));
+      res.status(200).json({
+        success: true,
+        message: "potentials found",
+        data: potentials,
+      });
+    }
+    if (potentials.length <= cacheLength) {
+      redisClient.del(cacheKey);
+      redisClient.set(cacheKey, JSON.stringify(potentials));
+      cache = await redisClient.get(cacheKey);
+
+      res.status(200).json({
+        success: true,
+        message: "potentials found",
+        data: JSON.parse(cache),
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -65,6 +94,9 @@ const updatePotential = asyncHandler(async (req, res, next) => {
         { new: true }
       ).then(async (potentials) => {
         if (potentials) {
+          await redisClient.del(cacheKey);
+          const allPotentials = await Potential.find({});
+          await redisClient.set(cacheKey, JSON.stringify(allPotentials));
           res.status(200).json({
             success: true,
             message: `potential updated `,
@@ -91,6 +123,9 @@ const deletePotential = asyncHandler(async (req, res, next) => {
     const potential = await Potential.findOne({ _id: req.params.id });
     if (potential) {
       await Potential.findByIdAndDelete(req.params.id).then(async () => {
+        await redisClient.del(cacheKey);
+        const allPotentials = await Potential.find({});
+        await redisClient.set(cacheKey, JSON.stringify(allPotentials));
         res.status(200).json({
           success: true,
           message: `Delete potential `,
@@ -106,11 +141,30 @@ const deletePotential = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
-
+const deleteallPotential = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const potentials = await Potential.deleteMany({ _id: { $in: id } });
+    if (potentials) {
+      res.status(200).json({
+        success: true,
+        message: "all potentials deleted",
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "internal server error",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = {
   getPotentials,
   createPotential,
   getPotential,
   updatePotential,
   deletePotential,
+  deleteallPotential,
 };

@@ -11,5 +11,8 @@ TimescaleRouter.route("/:id")
   .get(TimescaleController.getTimescale)
   .patch(TimescaleController.updateTimescale)
   .delete(TimescaleController.deleteTimescale);
+TimescaleRouter.route("/delete/deleteall").delete(
+  TimescaleController.deleteallTimescales
+);
 
 module.exports = TimescaleRouter;

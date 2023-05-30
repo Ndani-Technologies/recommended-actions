@@ -11,5 +11,6 @@ CostRouter.route("/:id")
   .get(CostController.getCost)
   .patch(CostController.updateCost)
   .delete(CostController.deleteCost);
+CostRouter.route("/delete/deletall").delete(CostController.deleteallCosts);
 
 module.exports = CostRouter;
