@@ -11,5 +11,8 @@ CategoryRouter.route("/:id")
   .get(categoryController.getCategory)
   .patch(categoryController.updateCategory)
   .delete(categoryController.deleteCategory);
+CategoryRouter.route("/delete/deleteall").delete(
+  categoryController.deleteallCategories
+);
 
 module.exports = CategoryRouter;

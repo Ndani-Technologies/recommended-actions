@@ -13,6 +13,9 @@ actionstepRouter
   .patch(actionstepController.updateactionSteps)
   .delete(actionstepController.deleteactionSteps);
 actionstepRouter
+  .route("/delete/deleteall")
+  .delete(actionstepController.deleteallactionsteps);
+actionstepRouter
   .route("/filter/ByUser/:id")
   .get(actionstepController.getactionStepByUser);
 actionstepRouter
@@ -36,4 +39,7 @@ actionstepRouter
 actionstepRouter
   .route("/summery/adminSummery")
   .get(actionstepController.getactionStepAdminSummery);
+actionstepRouter
+  .route("/timesspend/byCategory")
+  .get(actionstepController.getTimeSpendByCategory);
 module.exports = actionstepRouter;

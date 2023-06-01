@@ -13,5 +13,8 @@ relationshipRouter
   .get(relationshipController.getRelationship)
   .patch(relationshipController.updateRelationship)
   .delete(relationshipController.deleteRelationship);
+relationshipRouter
+  .route("/delete/deleteall")
+  .delete(relationshipController.deleteallRelationShips);
 
 module.exports = relationshipRouter;

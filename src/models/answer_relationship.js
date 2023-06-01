@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const WeightSchema = new mongoose.Schema({
+const AnswerRelationshipSchema = new mongoose.Schema({
   language: {
     type: String,
     enum: ["English", "Spanish", "Arabic", "French"],
@@ -12,6 +12,9 @@ const WeightSchema = new mongoose.Schema({
     unique: true,
   },
 });
-WeightSchema.index({ title: 1 }, { unique: true });
-const Weight = mongoose.model("weight", WeightSchema);
-module.exports = Weight;
+AnswerRelationshipSchema.index({ title: 1 }, { unique: true });
+const AnswerRelationship = mongoose.model(
+  "answer_relationship",
+  AnswerRelationshipSchema
+);
+module.exports = AnswerRelationship;
