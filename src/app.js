@@ -17,14 +17,14 @@ const healthcheckRoute = require("./routes/healthcheck");
 
 const env = require("./configs/index");
 const logger = require("./middleware/logger");
-const userRoutes = require("./routes/users");
 const actionStepsRoutes = require("./routes/actionsteps");
-const weightRoutes = require("./routes/weight");
+const answerRelationshipRoutes = require("./routes/answer_relationship");
 const categoryRoutes = require("./routes/category");
 const potentialRoutes = require("./routes/potential");
 const costRoutes = require("./routes/cost");
 const timescaleRoutes = require("./routes/timescale");
 const relationshipRoutes = require("./routes/relationship");
+const statusRoutes = require("./routes/status");
 
 const url = env.mongoUrl;
 
@@ -83,14 +83,14 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/v1/ra/healthcheck", healthcheckRoute);
-app.use("/api/v1/ra/users", userRoutes);
 app.use("/api/v1/ra/actionsteps", actionStepsRoutes);
-app.use("/api/v1/ra/weights", weightRoutes);
+app.use("/api/v1/ra/answer_relationship", answerRelationshipRoutes);
 app.use("/api/v1/ra/categories", categoryRoutes);
 app.use("/api/v1/ra/potentials", potentialRoutes);
 app.use("/api/v1/ra/costs", costRoutes);
 app.use("/api/v1/ra/timescales", timescaleRoutes);
-app.use("/api/v1/ra/relationship", relationshipRoutes);
+app.use("/api/v1/ra/relationships", relationshipRoutes);
+app.use("/api/v1/ra/status", statusRoutes);
 
 app.use((req, res, next) => {
   const err = new Error();

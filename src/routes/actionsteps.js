@@ -39,4 +39,7 @@ actionstepRouter
 actionstepRouter
   .route("/summery/adminSummery")
   .get(actionstepController.getactionStepAdminSummery);
+actionstepRouter
+  .route("/timesspend/byCategory")
+  .get(actionstepController.getTimeSpendByCategory);
 module.exports = actionstepRouter;

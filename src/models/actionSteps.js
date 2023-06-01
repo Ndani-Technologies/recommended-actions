@@ -25,15 +25,8 @@ const ActionSteps = new mongoose.Schema(
       type: Number,
     },
     status: {
-      type: String,
-      enum: [
-        "Not Started",
-        "In Progress",
-        "Completed",
-        "Assigned",
-        "Un Assigned",
-        "Attempt",
-      ],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "status",
       default: "Not Started",
     },
     feedback: {
@@ -76,9 +69,9 @@ const ActionSteps = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "timescale",
     },
-    weightId: {
+    answerRelationshipId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "weight",
+      ref: "answer_relationship",
     },
   },
   { timestamps: true }
