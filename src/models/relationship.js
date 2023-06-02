@@ -6,35 +6,28 @@ const RelationShips = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    assignmentType: {
+    visibility: {
       type: Boolean,
       default: false,
     },
-    answerRelation: [
+    questionId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    answerId: [
       {
         type: mongoose.Schema.Types.ObjectId,
       },
     ],
-    selectCondition: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-      },
-    ],
-    counter: {
-      type: Number,
-      default: 0,
+    answerRelationshipId: {
+      type: mongoose.Schema.Types.ObjectId,
     },
     recomendedActionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "actionSteps",
     },
-    Benchmarks_id: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
   },
   { timestamps: true }
 );
 
-RelationShips.index({ title: 1 }, { unique: true });
-const relationship = mongoose.model("realtionship", RelationShips);
+const relationship = mongoose.model("relationship", RelationShips);
 module.exports = relationship;
