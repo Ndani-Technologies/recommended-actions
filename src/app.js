@@ -25,14 +25,18 @@ const costRoutes = require("./routes/cost");
 const timescaleRoutes = require("./routes/timescale");
 const relationshipRoutes = require("./routes/relationship");
 const statusRoutes = require("./routes/status");
+const resourceLinkRouter = require("./routes/resource_link");
 
 const url = env.mongoUrl;
 
 const connect = mongoose.connect(url);
 
-connect.then(() => {
-  console.log("connected Correctly");
-});
+connect
+  .then(() => {
+    console.log("connected Correctly");
+  })
+  .catch((err) => console.log("mongo error", err));
+
 app.use(
   expresssession({
     secret: env.secrectKey,
@@ -91,6 +95,7 @@ app.use("/api/v1/ra/costs", costRoutes);
 app.use("/api/v1/ra/timescales", timescaleRoutes);
 app.use("/api/v1/ra/relationships", relationshipRoutes);
 app.use("/api/v1/ra/status", statusRoutes);
+app.use("/api/v1/ra/resourceLink", resourceLinkRouter);
 
 app.use((req, res, next) => {
   const err = new Error();
