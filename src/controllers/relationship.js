@@ -1,10 +1,12 @@
 /* eslint-disable import/extensions */
+const { default: axios } = require("axios");
 const logger = require("../middleware/logger");
 
 const { redisClient } = require("../middleware/redisClient");
 const RelationShip = require("../models/relationship");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/error-response");
+const actionsteps = require("../models/actionSteps");
 
 const cacheKey = "RELATIONSHIP";
 
@@ -44,11 +46,11 @@ const getRelationships = asyncHandler(async (req, res, next) => {
           model: "timescale",
           // select: 'language includeExplanation answerAttempt'
         },
-        {
-          path: "weightId",
-          model: "weight",
-          // select: 'language includeExplanation answerAttempt'
-        },
+        // {
+        //   path: "answerRelationshipId",
+        //   model: "AnswerRelationship",
+        //   // select: 'language includeExplanation answerAttempt'
+        // },
       ],
     });
   if (relationships === "") {
@@ -79,16 +81,85 @@ const getRelationships = asyncHandler(async (req, res, next) => {
   }
 });
 
+// const createRelationship = asyncHandler(async (req, res, next) => {
+//   const { status,
+//     visibility,
+//     qid,
+//     aid,
+//     answerRelationshipId,
+//     recomendedActionId } = req.body
+//     let question = await axios.get(`${process.env.QUESTION_URL}/${qid}`)
+//     let answers = question.data.data.answerOptions.filter((answer)=>{
+//       if(answer._id === aid) return answer;
+//     })
+//     question.answerOptions = answers;
+//     let body = {
+//       status,
+//     visibility,
+//     qid: question,
+//     answerRelationshipId,
+//     recomendedActionId
+//   }
+//   const relationship = await RelationShip.create(body);
+//   console.log("body", relationship, body)
+//   if (relationship) {
+//     res.status(200).json({
+//       success: true,
+//       message: "relationship created successfully",
+//       data: relationship,
+//     });
+//   } else {
+//     res.status(404).json({ success: false, message: "internal server error" });
+//   }
+// });
+
 const createRelationship = asyncHandler(async (req, res, next) => {
-  const relationship = await RelationShip.create(req.body);
-  if (relationship) {
-    res.status(200).json({
-      success: true,
-      message: "relationship created successfully",
-      data: relationship,
+  const {
+    status,
+    visibility,
+    qid,
+    aid,
+    answerRelationshipId,
+    recomendedActionId,
+  } = req.body;
+
+  try {
+    const questionResponse = await axios.get(
+      `${process.env.QUESTION_URL}/${qid}`
+    );
+    const question = questionResponse.data.data;
+    const answers = [];
+    aid.forEach((element) => {
+      question.answerOptions.forEach((answer) => {
+        if (answer._id === element) answers.push(answer);
+      });
     });
-  } else {
-    res.status(404).json({ success: false, message: "internal server error" });
+    question.answerOptions = answers;
+    const relationship = await RelationShip.create({
+      status,
+      visibility,
+      qid: question,
+      answerRelationshipId,
+      recomendedActionId,
+    });
+
+    console.log("relationship", recomendedActionId);
+
+    if (relationship) {
+      res.status(200).json({
+        success: true,
+        message: "Relationship created successfully",
+        data: relationship,
+      });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, message: "Internal server error" });
+    }
+  } catch (error) {
+    // Handle any error that occurred during the process
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 
@@ -196,11 +267,6 @@ const deleteRelationship = asyncHandler(async (req, res, next) => {
             {
               path: "timescaleId",
               model: "timescale",
-              // select: 'language includeExplanation answerAttempt'
-            },
-            {
-              path: "weightId",
-              model: "weight",
               // select: 'language includeExplanation answerAttempt'
             },
           ],

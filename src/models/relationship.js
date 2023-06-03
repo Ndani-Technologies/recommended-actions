@@ -4,26 +4,28 @@ const RelationShips = new mongoose.Schema(
   {
     status: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     visibility: {
       type: Boolean,
-      default: false,
+      default: true,
     },
-    questionId: {
-      type: mongoose.Schema.Types.ObjectId,
+    qid: {
+      type: Object,
     },
-    answerId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-      },
-    ],
     answerRelationshipId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "answer_relationship",
     },
-    recomendedActionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "actionSteps",
+    recomendedActionId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "actionSteps",
+      },
+    ],
+    assignmentType: {
+      type: String,
+      default: "Automatic",
     },
   },
   { timestamps: true }
