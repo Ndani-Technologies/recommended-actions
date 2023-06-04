@@ -14,6 +14,18 @@ const ActionSteps = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a description"],
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
+    visibilty: {
+      type: Boolean,
+      default: true,
+    },
+    steps: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Steps",
+    },
     isCompleted: {
       type: Boolean,
       default: false,
@@ -21,10 +33,8 @@ const ActionSteps = new mongoose.Schema(
     points: {
       type: Number,
     },
-    score: {
-      type: Number,
-    },
-    status: {
+
+    status_check: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "status",
       default: "Not Started",
