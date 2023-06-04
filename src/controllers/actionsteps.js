@@ -22,6 +22,7 @@ const getactionSteps = asyncHandler(async (req, res, next) => {
     "timescaleId",
     "answerRelationshipId",
     "status",
+    "steps",
   ]);
   if (actionsteps === "") {
     res.status(404).json({
@@ -75,6 +76,7 @@ const getactionStep = asyncHandler(async (req, res, next) => {
     "timescaleId",
     "answerRelationshipId",
     "status",
+    "steps",
   ]);
 
   if (!actionstep) {
