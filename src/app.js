@@ -27,7 +27,7 @@ const relationshipRoutes = require("./routes/relationship");
 const statusRoutes = require("./routes/status");
 
 const resourceLinkRouter = require("./routes/resource_link");
-
+const steps = require("./routes/stepRouter");
 
 const url = env.mongoUrl;
 
@@ -98,7 +98,7 @@ app.use("/api/v1/ra/timescales", timescaleRoutes);
 app.use("/api/v1/ra/relationships", relationshipRoutes);
 app.use("/api/v1/ra/status", statusRoutes);
 app.use("/api/v1/ra/resourceLink", resourceLinkRouter);
-
+app.use("/api/v1/ra/steps", steps);
 
 app.use((req, res, next) => {
   const err = new Error();
