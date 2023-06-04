@@ -22,10 +22,14 @@ const ActionSteps = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    steps: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Steps",
-    },
+
+    steps: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Steps",
+      },
+    ],
+
     isCompleted: {
       type: Boolean,
       default: false,
@@ -37,7 +41,6 @@ const ActionSteps = new mongoose.Schema(
     status_check: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "status",
-      default: "Not Started",
     },
     feedback: {
       type: String,
