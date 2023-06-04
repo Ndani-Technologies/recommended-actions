@@ -22,12 +22,14 @@ const ActionSteps = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
     steps: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Steps",
       },
     ],
+
     isCompleted: {
       type: Boolean,
       default: false,
