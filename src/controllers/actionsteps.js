@@ -4,7 +4,7 @@ const asyncHandler = require("../middleware/async");
 
 const cacheKey = "ACTIONSTEP";
 
-const getactionSteps = asyncHandler(async (req, res, next) => {
+const getactionSteps = asyncHandler(async (req, res) => {
   let cache = await redisClient.get(cacheKey);
   let cacheObj = "";
   let cacheLength = 0;
@@ -52,7 +52,7 @@ const getactionSteps = asyncHandler(async (req, res, next) => {
   }
 });
 
-const createactionSteps = asyncHandler(async (req, res, next) => {
+const createactionSteps = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.create(req.body);
   if (actionsteps) {
     res.status(200).json({
@@ -65,7 +65,7 @@ const createactionSteps = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStep = asyncHandler(async (req, res, next) => {
+const getactionStep = asyncHandler(async (req, res) => {
   const { id: actionstepId } = req.params;
   const actionstep = await ActionStep.findOne({
     _id: actionstepId,
@@ -90,7 +90,7 @@ const getactionStep = asyncHandler(async (req, res, next) => {
   }
 });
 
-const updateactionSteps = asyncHandler(async (req, res, next) => {
+const updateactionSteps = asyncHandler(async (req, res) => {
   const actionstep = await ActionStep.findOne({ _id: req.params.id });
   if (actionstep) {
     await ActionStep.findByIdAndUpdate(
@@ -127,7 +127,7 @@ const updateactionSteps = asyncHandler(async (req, res, next) => {
   }
 });
 
-const deleteactionSteps = asyncHandler(async (req, res, next) => {
+const deleteactionSteps = asyncHandler(async (req, res) => {
   const actionstep = await ActionStep.findOne({ _id: req.params.id });
   if (actionstep) {
     await ActionStep.findByIdAndDelete(req.params.id).then(async () => {
@@ -154,16 +154,25 @@ const deleteactionSteps = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepByUser = asyncHandler(async (req, res, next) => {
+const getactionStepByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.findOne({
     userId: req.params.id,
   });
   if (actionsteps) {
-    res.status(200).json({
-      success: true,
-      message: "actionsteps retrieved by user",
-      data: actionsteps,
-    });
+    if (actionsteps.length > 0) {
+      res.status(200).json({
+        success: true,
+        message: "actionsteps retrieved by user",
+        data: actionsteps,
+      });
+    }
+    if (actionsteps.length <= 0) {
+      res.status(200).json({
+        success: true,
+        message: "no action steps assign to specific user",
+      });
+    }
+    // eslint-disable-next-line no-undef
   } else {
     res.status(404).json({
       success: false,
@@ -172,7 +181,7 @@ const getactionStepByUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepByCountry = asyncHandler(async (req, res, next) => {
+const getactionStepByCountry = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.country, "i");
   const actionsteps = await ActionStep.findOne({
     country: { $regex: query },
@@ -191,7 +200,7 @@ const getactionStepByCountry = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepByOrganization = asyncHandler(async (req, res, next) => {
+const getactionStepByOrganization = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.organization, "i");
   const actionsteps = await ActionStep.findOne({
     organization: { $regex: query },
@@ -210,7 +219,7 @@ const getactionStepByOrganization = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepBetweenDates = asyncHandler(async (req, res, next) => {
+const getactionStepBetweenDates = asyncHandler(async (req, res) => {
   const startDate = new Date(req.params.startdate);
   const endDate = new Date(req.params.enddate);
   if (Number.isNaN(startDate) || Number.isNaN(endDate)) {
@@ -244,7 +253,7 @@ const getactionStepBetweenDates = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepByTitle = asyncHandler(async (req, res, next) => {
+const getactionStepByTitle = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.title, "i");
   const actionsteps = await ActionStep.find({
     title: { $regex: query },
@@ -263,7 +272,7 @@ const getactionStepByTitle = asyncHandler(async (req, res, next) => {
   }
 });
 
-const getactionStepReport = asyncHandler(async (req, res, next) => {
+const getactionStepReport = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({}).populate("status");
   const totalactionstep = actionsteps.length;
   let assignedCount = 0;
@@ -327,7 +336,7 @@ const getactionStepReport = asyncHandler(async (req, res, next) => {
   });
 });
 
-const getTotalPointsEarned = asyncHandler(async (req, res, next) => {
+const getTotalPointsEarned = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({}).populate("categoryId");
   if (actionsteps && actionsteps.length > 0) {
     let avoidCount = 0;
@@ -359,7 +368,7 @@ const getTotalPointsEarned = asyncHandler(async (req, res, next) => {
     });
   }
 });
-const getactionStepAdminSummery = asyncHandler(async (req, res, next) => {
+const getactionStepAdminSummery = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({}).populate("status");
   const totalactionstep = actionsteps.length;
   let assignedCount = 0;
@@ -422,7 +431,7 @@ const getactionStepAdminSummery = asyncHandler(async (req, res, next) => {
     data: returnData,
   });
 });
-const deleteallactionsteps = asyncHandler(async (req, res, next) => {
+const deleteallactionsteps = asyncHandler(async (req, res) => {
   const { id } = req.body;
   const actionsteps = await ActionStep.deleteMany({ _id: { $in: id } });
   if (actionsteps) {
@@ -469,7 +478,6 @@ const getTimeSpendByCategory = asyncHandler(async (req, res, next) => {
   );
 
   const totalHours = avoidTimeHours + shiftTimeHours + improveTimeHours;
-  const totalMinutes = avoidTimeMinutes + shiftTimeMinutes + improveTimeMinutes;
 
   const totalDays = Math.floor(totalHours / 24);
   const remainingHours = totalHours % 24;

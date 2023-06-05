@@ -45,7 +45,7 @@ const ActionSteps = new mongoose.Schema(
     feedback: {
       type: String,
     },
-    assignedTo: [
+    userId: [
       {
         type: Object,
       },
@@ -56,9 +56,7 @@ const ActionSteps = new mongoose.Schema(
     country: {
       type: String,
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
+
     startdate: {
       type: Date,
       default: Date.now,
@@ -85,6 +83,10 @@ const ActionSteps = new mongoose.Schema(
     answerRelationshipId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "answer_relationship",
+    },
+    resourcelinkId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "resource_link",
     },
   },
   { timestamps: true }

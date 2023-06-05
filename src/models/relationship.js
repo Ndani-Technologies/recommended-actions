@@ -10,6 +10,9 @@ const RelationShips = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    userId: {
+      type: Object,
+    },
     qid: {
       type: Object,
     },
