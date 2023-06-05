@@ -16,5 +16,8 @@ relationshipRouter
 relationshipRouter
   .route("/delete/deleteall")
   .delete(relationshipController.deleteallRelationShips);
+relationshipRouter
+  .route("/getRelationships/ByQuestionId/:questionid/:answerid")
+  .get(relationshipController.getRelationShipByQid);
 
 module.exports = relationshipRouter;

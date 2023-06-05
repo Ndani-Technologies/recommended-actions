@@ -17,6 +17,12 @@ const steps = new mongoose.Schema(
     score: {
       type: Number,
     },
+    status: {
+      type: Boolean,
+    },
+    isCompleted: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );

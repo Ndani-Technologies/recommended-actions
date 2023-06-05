@@ -5,8 +5,6 @@ const logger = require("../middleware/logger");
 const { redisClient } = require("../middleware/redisClient");
 const RelationShip = require("../models/relationship");
 const asyncHandler = require("../middleware/async");
-const ErrorResponse = require("../utils/error-response");
-const actionsteps = require("../models/actionSteps");
 
 const cacheKey = "RELATIONSHIP";
 
@@ -167,8 +165,8 @@ const getRelationship = asyncHandler(async (req, res, next) => {
   const { id: relationshipId } = req.params;
   const relationship = await RelationShip.findOne({ _id: req.params.id });
 
-  if (!relationship) {
-    res.status(200).json({ success: true, message: "relationship not found " });
+  if (relationship && relationship.length <= 0) {
+    res.status(404).json({ success: true, message: "relationship not found " });
   } else {
     res.status(200).json({
       success: true,
@@ -299,6 +297,31 @@ const deleteallRelationShips = asyncHandler(async (req, res, next) => {
     });
   }
 });
+const getRelationShipByQid = asyncHandler(async (req, res, next) => {
+  const { questionid } = req.params;
+  const { answerid } = req.params;
+  const relationship = await RelationShip.find({ "qid._id": questionid });
+  const returnData = [];
+  if (relationship && relationship.length <= 0) {
+    res.status(404).json({
+      success: true,
+      message: "relationship not found ",
+    });
+  } else {
+    relationship.forEach((element) => {
+      element.qid.answerOptions.forEach((innerElement) => {
+        if (innerElement._id && innerElement._id === answerid) {
+          returnData.push(element);
+        }
+      });
+    });
+    res.status(200).json({
+      success: true,
+      message: "relationship found ",
+      data: returnData,
+    });
+  }
+});
 module.exports = {
   getRelationships,
   createRelationship,
@@ -306,4 +329,5 @@ module.exports = {
   updateRelationship,
   deleteRelationship,
   deleteallRelationShips,
+  getRelationShipByQid,
 };
