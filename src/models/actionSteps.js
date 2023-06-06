@@ -47,7 +47,13 @@ const ActionSteps = new mongoose.Schema(
     },
     userId: [
       {
-        type: Object,
+        user: { type: Object },
+        attempted_steps: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Steps",
+          },
+        ],
       },
     ],
     organization: {

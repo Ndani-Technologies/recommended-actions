@@ -53,20 +53,22 @@ const getactionSteps = asyncHandler(async (req, res) => {
 });
 
 const createactionSteps = asyncHandler(async (req, res) => {
-  const actionsteps = await ActionStep.create(req.body).populate([
-    "categoryId",
-    "costId",
-    "potentialId",
-    "timescaleId",
-    "answerRelationshipId",
-    "status",
-    "steps",
-  ]);
+  const actionsteps = await ActionStep.create(req.body);
   if (actionsteps) {
+    const actions = await ActionStep.findOne(req.body).populate([
+      "categoryId",
+      "costId",
+      "potentialId",
+      "timescaleId",
+      "answerRelationshipId",
+      "status",
+      "steps",
+    ]);
+
     res.status(200).json({
       success: true,
       message: "actionstep created successfully",
-      data: actionsteps,
+      data: actions,
     });
   } else {
     res.status(404).json({ success: false, message: "internal server error" });
