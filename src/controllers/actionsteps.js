@@ -1,6 +1,10 @@
+const { default: axios } = require("axios");
+const mongoose = require("mongoose");
 const { redisClient } = require("../middleware/redisClient");
 const ActionStep = require("../models/actionSteps");
 const asyncHandler = require("../middleware/async");
+
+const devenv = require("../configs/index");
 
 const cacheKey = "ACTIONSTEP";
 
@@ -117,6 +121,7 @@ const updateactionSteps = asyncHandler(async (req, res) => {
           "timescaleId",
           "answerRelationshipId",
           "status",
+          "steps",
         ]);
         await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
         res.status(200).json({
@@ -149,6 +154,7 @@ const deleteactionSteps = asyncHandler(async (req, res) => {
         "timescaleId",
         "answerRelationshipId",
         "status",
+        "steps",
       ]);
       await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
       res.status(200).json({
@@ -170,28 +176,44 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   const actionstep = await ActionStep.findById(ra_id);
   // eslint-disable-next-line camelcase
   const user_id = req.body.user;
+  if (!mongoose.Types.ObjectId.isValid(user_id)) {
+    res.status(404).json({
+      success: false,
+      message: "user id is not valid",
+    });
+    return;
+  }
+  const userIdIsValid = await axios.get(
+    // eslint-disable-next-line camelcase
+    `${devenv.usermoduleUrl}${user_id}`
+  );
   if (actionstep) {
     // eslint-disable-next-line camelcase
     const isUserExist = actionstep.assigned_user.some(
       // eslint-disable-next-line camelcase
       (e) => e.userId === user_id
     );
-    console.log("user", isUserExist);
-
-    if (isUserExist) {
-      res.status(200).json({
-        success: true,
-        message: "actionsteps updated by user",
-        data: actionstep,
-      });
+    if (userIdIsValid.data.success) {
+      if (isUserExist) {
+        res.status(200).json({
+          success: true,
+          message: "actionsteps updated by user",
+          data: actionstep,
+        });
+      } else {
+        // eslint-disable-next-line camelcase
+        actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
+        await actionstep.save();
+        res.status(200).json({
+          success: true,
+          message: "actionsteps updated by user",
+          data: actionstep,
+        });
+      }
     } else {
-      // eslint-disable-next-line camelcase
-      actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
-      await actionstep.save();
-      res.status(200).json({
-        success: true,
-        message: "actionsteps updated by user",
-        data: actionstep,
+      res.status(404).json({
+        success: false,
+        message: "user id is not valid",
       });
     }
   } else {
@@ -205,7 +227,15 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
 const getactionStepByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({
     "assigned_user.userId": req.params.id,
-  });
+  }).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+  ]);
 
   if (actionsteps) {
     res.status(200).json({
@@ -226,7 +256,15 @@ const getactionStepByCountry = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.country, "i");
   const actionsteps = await ActionStep.findOne({
     country: { $regex: query },
-  });
+  }).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+  ]);
   if (actionsteps) {
     res.status(200).json({
       success: true,
@@ -245,7 +283,15 @@ const getactionStepByOrganization = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.organization, "i");
   const actionsteps = await ActionStep.findOne({
     organization: { $regex: query },
-  });
+  }).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+  ]);
   if (actionsteps) {
     res.status(200).json({
       success: true,
@@ -278,7 +324,15 @@ const getactionStepBetweenDates = asyncHandler(async (req, res) => {
         $gte: startDate,
         $lte: endDate,
       },
-    });
+    }).populate([
+      "categoryId",
+      "costId",
+      "potentialId",
+      "timescaleId",
+      "answerRelationshipId",
+      "status",
+      "steps",
+    ]);
     if (actionsteps.length > 0) {
       res.status(500).json({
         message: "actionsteps retrieved",
@@ -298,7 +352,15 @@ const getactionStepByTitle = asyncHandler(async (req, res) => {
   const query = new RegExp(req.params.title, "i");
   const actionsteps = await ActionStep.find({
     title: { $regex: query },
-  });
+  }).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+  ]);
   if (actionsteps) {
     res.status(200).json({
       message: "actionsteps retrieved with Title",
