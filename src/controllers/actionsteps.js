@@ -1,3 +1,6 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-const */
+
 const { default: axios } = require("axios");
 const mongoose = require("mongoose");
 const { redisClient } = require("../middleware/redisClient");
@@ -55,7 +58,20 @@ const getactionSteps = asyncHandler(async (req, res) => {
     });
   }
 });
-
+const updateStepsByUser = asyncHandler(async (req, res) => {
+  const actionsteps = await ActionStep.findById(req.params.raId);
+  const { userId, steps } = req.body;
+  let users = actionsteps.assigned_user;
+  // eslint-disable-next-line prefer-const
+  let userIndex = users.findIndex((user) => user.userId == userId);
+  actionsteps.assigned_user[userIndex].attempted_steps = steps;
+  await actionsteps.save();
+  res.status(200).json({
+    success: true,
+    message: "actionsteps updated",
+    data: actionsteps,
+  });
+});
 const createactionSteps = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.create(req.body);
   if (actionsteps) {
@@ -216,7 +232,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       res.status(404).json({
         success: false,
         message: "user id is not valid",
-
       });
     }
   } else {
@@ -238,9 +253,11 @@ const getactionStepByUser = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
-
-
   if (actionsteps) {
     res.status(200).json({
       success: true,
@@ -630,4 +647,5 @@ module.exports = {
   deleteallactionsteps,
   getTimeSpendByCategory,
   getactionUpdateByUser,
+  updateStepsByUser,
 };

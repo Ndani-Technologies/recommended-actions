@@ -19,9 +19,11 @@ const steps = new mongoose.Schema(
     },
     status: {
       type: Boolean,
+      default: false,
     },
     isCompleted: {
       type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
