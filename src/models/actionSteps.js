@@ -48,6 +48,7 @@ const ActionSteps = new mongoose.Schema(
     assigned_user: [
       {
         userId: { type: String },
+
         attempted_steps: [
           {
             type: mongoose.Schema.Types.ObjectId,
