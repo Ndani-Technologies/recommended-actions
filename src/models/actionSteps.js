@@ -45,9 +45,9 @@ const ActionSteps = new mongoose.Schema(
     feedback: {
       type: String,
     },
-    userId: [
+    assigned_user: [
       {
-        user: { type: Object },
+        userId: { type: String },
         attempted_steps: [
           {
             type: mongoose.Schema.Types.ObjectId,
