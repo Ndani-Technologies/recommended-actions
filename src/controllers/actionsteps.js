@@ -53,7 +53,15 @@ const getactionSteps = asyncHandler(async (req, res) => {
 });
 
 const createactionSteps = asyncHandler(async (req, res) => {
-  const actionsteps = await ActionStep.create(req.body);
+  const actionsteps = await ActionStep.create(req.body).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+  ]);
   if (actionsteps) {
     res.status(200).json({
       success: true,
