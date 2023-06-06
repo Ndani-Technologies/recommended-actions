@@ -22,6 +22,12 @@ actionstepRouter
   .route("/update/ByUser/:id")
 
   .patch(actionstepController.getactionUpdateByUser);
+actionstepRouter
+  .route("/update/stepsave/ByUser/:raId")
+  .patch(actionstepController.updateStepsByUser);
+actionstepRouter
+  .route("/update/stepcomplete/ByUser/:raId")
+  .patch(actionstepController.updateStepsByUser);
 
 actionstepRouter
   .route("/filter/ByTitle/:title")
