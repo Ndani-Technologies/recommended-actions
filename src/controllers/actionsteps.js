@@ -192,17 +192,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
 
   // eslint-disable-next-line camelcase
   const user_id = req.body.user;
-  if (!mongoose.Types.ObjectId.isValid(user_id)) {
-    res.status(404).json({
-      success: false,
-      message: "user id is not valid",
-    });
-    return;
-  }
-  const userIdIsValid = await axios.get(
-    // eslint-disable-next-line camelcase
-    `${devenv.usermoduleUrl}${user_id}`
-  );
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
@@ -210,27 +199,21 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       // eslint-disable-next-line camelcase
       (e) => e.userId === user_id
     );
-    if (userIdIsValid.data.success) {
-      if (isUserExist) {
-        res.status(200).json({
-          success: true,
-          message: "actionsteps updated by user",
-          data: actionstep,
-        });
-      } else {
-        // eslint-disable-next-line camelcase
-        actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
-        await actionstep.save();
-        res.status(200).json({
-          success: true,
-          message: "actionsteps updated by user",
-          data: actionstep,
-        });
-      }
+
+    if (isUserExist) {
+      res.status(200).json({
+        success: true,
+        message: "actionsteps updated by user",
+        data: actionstep,
+      });
     } else {
-      res.status(404).json({
-        success: false,
-        message: "user id is not valid",
+      // eslint-disable-next-line camelcase
+      actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
+      await actionstep.save();
+      res.status(200).json({
+        success: true,
+        message: "actionsteps updated by user",
+        data: actionstep,
       });
     }
   } else {
