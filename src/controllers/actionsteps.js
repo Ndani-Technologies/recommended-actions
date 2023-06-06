@@ -173,6 +173,7 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   if (actionstep) {
     // eslint-disable-next-line camelcase
     const isUserExist = actionstep.assigned_user.some(
+      // eslint-disable-next-line camelcase
       (e) => e.userId === user_id
     );
     console.log("user", isUserExist);
