@@ -168,23 +168,34 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   // eslint-disable-next-line camelcase
   const ra_id = req.params.id;
   const actionstep = await ActionStep.findById(ra_id);
-  const { userId } = req.body;
+
+  // eslint-disable-next-line camelcase
+  const user_id = req.body.user;
   if (actionstep) {
-    if (actionstep.userId.includes(userId)) {
+    // eslint-disable-next-line camelcase
+    const isUserExist = actionstep.assigned_user.some(
+      // eslint-disable-next-line camelcase
+      (e) => e.userId === user_id
+    );
+    console.log("user", isUserExist);
+
+    if (isUserExist) {
+
+      res.status(200).json({
+        success: true,
+        message: "actionsteps updated by user",
+        data: actionstep,
+      });
+    } else {
+      // eslint-disable-next-line camelcase
+      actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
+      await actionstep.save();
       res.status(200).json({
         success: true,
         message: "actionsteps updated by user",
         data: actionstep,
       });
     }
-    actionstep.userId.push(userId);
-    await actionstep.save();
-    res.status(200).json({
-      success: true,
-      message: "actionsteps updated by user",
-      data: actionstep,
-    });
-
   } else {
     res.status(200).json({
       success: true,
@@ -194,25 +205,16 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   }
 });
 const getactionStepByUser = asyncHandler(async (req, res) => {
-  const actionsteps = await ActionStep.findOne({
-    userId: { $in: req.params.id },
+  const actionsteps = await ActionStep.find({
+    "assigned_user.userId": req.params.id,
   });
 
   if (actionsteps) {
-    if (actionsteps.length > 0) {
-      res.status(200).json({
-        success: true,
-        message: "actionsteps retrieved by user",
-        data: actionsteps,
-      });
-    }
-    if (actionsteps.length <= 0) {
-      res.status(200).json({
-        success: true,
-        message: "no action steps assign to specific user",
-      });
-    }
-    // eslint-disable-next-line no-undef
+    res.status(200).json({
+      success: true,
+      message: "actionsteps retrieved by user",
+      data: actionsteps,
+    });
   } else {
     res.status(404).json({
       success: true,
