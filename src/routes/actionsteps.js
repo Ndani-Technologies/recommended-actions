@@ -19,6 +19,9 @@ actionstepRouter
   .route("/filter/ByUser/:id")
   .get(actionstepController.getactionStepByUser);
 actionstepRouter
+  .route("/update/ByUser/:id")
+  .patch(actionstepController.getactionStepByUser);
+actionstepRouter
   .route("/filter/ByTitle/:title")
   .get(actionstepController.getactionStepByTitle);
 actionstepRouter

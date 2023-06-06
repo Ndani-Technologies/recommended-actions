@@ -162,10 +162,39 @@ const deleteactionSteps = asyncHandler(async (req, res) => {
   }
 });
 
+const getactionUpdateByUser = asyncHandler(async (req, res) => {
+  // eslint-disable-next-line camelcase
+  const ra_id = req.params.id;
+  const actionstep = await ActionStep.findById(ra_id);
+  const { userId } = req.body;
+  if (actionstep) {
+    if (actionstep.userId.includes(userId)) {
+      res.status(200).json({
+        success: true,
+        message: "actionsteps updated by user",
+        data: actionstep,
+      });
+    }
+    actionstep.userId.push(userId);
+    await actionstep.save();
+    res.status(200).json({
+      success: true,
+      message: "actionsteps updated by user",
+      data: actionstep,
+    });
+  } else {
+    res.status(200).json({
+      success: true,
+      message: "actionsteps not found",
+      data: [],
+    });
+  }
+});
 const getactionStepByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.findOne({
-    userId: req.params.id,
+    userId: { $in: req.params.id },
   });
+
   if (actionsteps) {
     if (actionsteps.length > 0) {
       res.status(200).json({
@@ -183,8 +212,9 @@ const getactionStepByUser = asyncHandler(async (req, res) => {
     // eslint-disable-next-line no-undef
   } else {
     res.status(404).json({
-      success: false,
-      message: "actionsteps not found by user",
+      success: true,
+      data: [],
+      message: "zero actions found",
     });
   }
 });
@@ -530,4 +560,5 @@ module.exports = {
   getactionStepAdminSummery,
   deleteallactionsteps,
   getTimeSpendByCategory,
+  getactionUpdateByUser,
 };
