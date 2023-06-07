@@ -30,6 +30,11 @@ const getactionSteps = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
   if (actionsteps === "") {
     res.status(404).json({
@@ -65,6 +70,7 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   // eslint-disable-next-line prefer-const
   let userIndex = users.findIndex((user) => user.userId == userId);
   actionsteps.assigned_user[userIndex].attempted_steps = steps;
+  console.log(actionsteps);
   await actionsteps.save();
   res.status(200).json({
     success: true,
@@ -75,7 +81,7 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
 const createactionSteps = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.create(req.body);
   if (actionsteps) {
-    const actions = await ActionStep.findOne(req.body).populate([
+    const actions = await ActionStep.findById(actionsteps._id).populate([
       "categoryId",
       "costId",
       "potentialId",
@@ -83,6 +89,11 @@ const createactionSteps = asyncHandler(async (req, res) => {
       "answerRelationshipId",
       "status",
       "steps",
+      "resourcelinkId",
+      {
+        path: "assigned_user.attempted_steps",
+        model: "Steps",
+      },
     ]);
 
     res.status(200).json({
@@ -107,6 +118,11 @@ const getactionStep = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
 
   if (!actionstep) {
@@ -138,6 +154,11 @@ const updateactionSteps = asyncHandler(async (req, res) => {
           "answerRelationshipId",
           "status",
           "steps",
+          "resourcelinkId",
+          {
+            path: "assigned_user.attempted_steps",
+            model: "Steps",
+          },
         ]);
         await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
         res.status(200).json({
@@ -171,6 +192,11 @@ const deleteactionSteps = asyncHandler(async (req, res) => {
         "answerRelationshipId",
         "status",
         "steps",
+        "resourcelinkId",
+        {
+          path: "assigned_user.attempted_steps",
+          model: "Steps",
+        },
       ]);
       await redisClient.set(cacheKey, JSON.stringify(allActionSteps));
       res.status(200).json({
@@ -236,6 +262,7 @@ const getactionStepByUser = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
     {
       path: "assigned_user.attempted_steps",
       model: "Steps",
@@ -268,6 +295,11 @@ const getactionStepByCountry = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
   if (actionsteps) {
     res.status(200).json({
@@ -295,6 +327,11 @@ const getactionStepByOrganization = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
   if (actionsteps) {
     res.status(200).json({
@@ -336,6 +373,11 @@ const getactionStepBetweenDates = asyncHandler(async (req, res) => {
       "answerRelationshipId",
       "status",
       "steps",
+      "resourcelinkId",
+      {
+        path: "assigned_user.attempted_steps",
+        model: "Steps",
+      },
     ]);
     if (actionsteps.length > 0) {
       res.status(500).json({
@@ -364,6 +406,11 @@ const getactionStepByTitle = asyncHandler(async (req, res) => {
     "answerRelationshipId",
     "status",
     "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
   ]);
   if (actionsteps) {
     res.status(200).json({
