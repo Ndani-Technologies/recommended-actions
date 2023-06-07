@@ -192,7 +192,7 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   const actionstep = await ActionStep.findById(ra_id);
 
   // eslint-disable-next-line camelcase
-  const user_id = req.body.user;
+  const user_id = req.body.userId;
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
@@ -200,8 +200,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       // eslint-disable-next-line camelcase
       (e) => e.userId === user_id
     );
-
-
     if (isUserExist) {
       res.status(200).json({
         success: true,
@@ -216,7 +214,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
         success: true,
         message: "actionsteps updated by user",
         data: actionstep,
-
       });
     }
   } else {
