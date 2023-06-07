@@ -91,10 +91,12 @@ const ActionSteps = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "answer_relationship",
     },
-    resourcelinkId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "resource_link",
-    },
+    resourcelinkId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "resource_link",
+      },
+    ],
   },
   { timestamps: true }
 );

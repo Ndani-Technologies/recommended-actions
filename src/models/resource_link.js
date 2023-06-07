@@ -9,9 +9,7 @@ const ResourceLinkSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please provide a title"],
-    unique: true,
   },
 });
-ResourceLinkSchema.index({ title: 1 }, { unique: true });
 const Category = mongoose.model("resource_link", ResourceLinkSchema);
 module.exports = Category;
