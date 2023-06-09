@@ -140,14 +140,45 @@ const createRelationship = asyncHandler(async (req, res, next) => {
       answerRelationshipId,
       recomendedActionId,
     });
-
+    const relationshipPopulate = await RelationShip.findById(relationship._id)
+      .populate("recomendedActionId")
+      .populate({
+        path: "recomendedActionId",
+        populate: [
+          {
+            path: "categoryId",
+            model: "category",
+            // select: 'language titleEng titleAr titleSp titleFr'
+          },
+          {
+            path: "costId",
+            model: "cost",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "potentialId",
+            model: "potential",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "timescaleId",
+            model: "timescale",
+            // select: 'language includeExplanation answerAttempt'
+          },
+          {
+            path: "answerRelationshipId",
+            model: "AnswerRelationship",
+            // select: 'language includeExplanation answerAttempt'
+          },
+        ],
+      });
     console.log("relationship", recomendedActionId);
 
     if (relationship) {
       res.status(200).json({
         success: true,
         message: "Relationship created successfully",
-        data: relationship,
+        data: relationshipPopulate,
       });
     } else {
       res
