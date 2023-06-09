@@ -12,10 +12,10 @@ const steps = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "Please provide a description"],
     },
     score: {
       type: Number,
+      required: [true, "Please provide score"],
     },
     status: {
       type: Boolean,
