@@ -8,6 +8,7 @@ const ResourceLinkSchema = new mongoose.Schema({
   },
   title: {
     type: String,
+
   },
 });
 const Category = mongoose.model("resource_link", ResourceLinkSchema);
