@@ -55,6 +55,10 @@ const ActionSteps = new mongoose.Schema(
             ref: "Steps",
           },
         ],
+        step_score: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
     organization: {

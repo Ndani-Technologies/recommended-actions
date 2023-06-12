@@ -3,8 +3,10 @@
 
 const { default: axios } = require("axios");
 const mongoose = require("mongoose");
+
 const { redisClient } = require("../middleware/redisClient");
 const ActionStep = require("../models/actionSteps");
+const Step = require("../models/steps");
 const asyncHandler = require("../middleware/async");
 
 const devenv = require("../configs/index");
@@ -68,14 +70,50 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const { userId, steps } = req.body;
   let users = actionsteps.assigned_user;
   // eslint-disable-next-line prefer-const
-  let userIndex = users.findIndex((user) => user.userId == userId);
-  actionsteps.assigned_user[userIndex].attempted_steps = steps;
-  console.log(actionsteps);
+  let userIndex = users.findIndex((user) => user.userId === userId);
+  actionsteps.assigned_user[userIndex].attempted_steps = steps._id;
+  steps.forEach(async (stepUpdate) => {
+    const stepBody = {
+      _id: stepUpdate._id,
+      score: stepUpdate.score,
+      status: stepUpdate.status,
+      isCompleted: stepUpdate.isCompleted,
+    };
+    if (stepUpdate.isCompleted === true) {
+      actionsteps.assigned_user[userIndex].step_score += stepUpdate.score;
+    }
+    if (Array.isArray(actionsteps.assigned_user[userIndex].attempted_steps)) {
+      actionsteps.assigned_user[userIndex].attempted_steps.push(stepUpdate._id);
+    } else {
+      actionsteps.assigned_user[userIndex].attempted_steps = [stepUpdate._id];
+    }
+    await Step.findByIdAndUpdate(stepUpdate._id, { $set: stepBody });
+  });
+  const query = `${devenv.usermoduleUrl}${userId}`;
+  const response = await axios.patch(query, {
+    actionPoints: actionsteps.assigned_user[userIndex].step_score,
+  });
   await actionsteps.save();
+  const actionStepsUpdate = await ActionStep.findOne({
+    _id: actionsteps._id,
+  }).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
+  ]);
   res.status(200).json({
     success: true,
     message: "actionsteps updated",
-    data: actionsteps,
+    data: actionStepsUpdate,
   });
 });
 const createactionSteps = asyncHandler(async (req, res) => {
@@ -219,7 +257,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
 
   // eslint-disable-next-line camelcase
   const user_id = req.body.userId;
-
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
