@@ -288,6 +288,48 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
     });
   }
 });
+const removeUserFromActionsteps = asyncHandler(async (req, res) => {
+  const actionstep = await ActionStep.findById(req.params.id).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
+  ]);
+
+  if (!actionstep) {
+    // Handle the case where the ActionStep is not found
+    return res.status(404).json({ message: "ActionStep not found" });
+  }
+
+  const userIdToDelete = req.body.userId;
+
+  // Find the index of the entry with the specified userId
+  const indexToDelete = actionstep.assigned_user.findIndex(
+    (user) => user.userId === userIdToDelete
+  );
+
+  // Remove the entry from the assigned_user array
+  if (indexToDelete !== -1) {
+    actionstep.assigned_user.splice(indexToDelete, 1);
+  }
+
+  // Save the updated ActionStep
+  const updatedActionStep = await actionstep.save();
+  res.status(200).json({
+    success: true,
+    message: "remove user from action steps",
+    data: updatedActionStep,
+  });
+});
+
 const getactionStepByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({
     "assigned_user.userId": req.params.id,
@@ -715,4 +757,5 @@ module.exports = {
   getTimeSpendByCategory,
   getactionUpdateByUser,
   updateStepsByUser,
+  removeUserFromActionsteps,
 };
