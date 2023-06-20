@@ -206,15 +206,43 @@ const getRelationship = asyncHandler(async (req, res, next) => {
 
 const updateRelationship = asyncHandler(async (req, res, next) => {
   const relationship = await RelationShip.findOne({ _id: req.params.id });
+  const {
+    status,
+    visibility,
+    qid,
+    aid,
+    answerRelationshipId,
+    recomendedActionId,
+  } = req.body;
+  const questionResponse = await axios.get(
+    `${process.env.QUESTION_URL}/${qid}`
+  );
+  const question = questionResponse.data.data;
+  const answers = [];
+  aid.forEach((element) => {
+    question.answerOptions.forEach((answer) => {
+      if (answer._id === element) answers.push(answer);
+    });
+  });
+  question.answerOptions = answers;
+  const reqBody = {
+    status,
+    visibility,
+    qid: question,
+    answerRelationshipId,
+    recomendedActionId,
+  };
   if (relationship) {
     await RelationShip.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: reqBody },
       { new: true }
     ).then(async (relationships) => {
       if (relationships) {
         await redisClient.del(cacheKey);
-        const allRelationships = await RelationShip.find({})
+        const allRelationships = await RelationShip.findOne({
+          _id: relationship._id,
+        })
           .populate("recomendedActionId")
           .populate({
             path: "recomendedActionId",
