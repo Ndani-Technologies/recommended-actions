@@ -94,6 +94,7 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,
   });
 
+
   // eslint-disable-next-line camelcase
   const user = await axios.get(`${devenv.usermoduleUrl}${userId}`);
   const userBody = user.data.data;
@@ -270,10 +271,12 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
 
   // eslint-disable-next-line camelcase
   const user_id = req.body.userId;
+
   // eslint-disable-next-line camelcase
   const user = await axios.get(`${devenv.usermoduleUrl}${user_id}`);
   const userBody = user.data.data;
   let recomendedActionAssign = userBody.recomendedActionAssigned;
+
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
