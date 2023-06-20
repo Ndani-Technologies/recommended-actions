@@ -93,7 +93,20 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const response = await axios.patch(query, {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,
   });
+
+  // eslint-disable-next-line camelcase
+  const user = await axios.get(`${devenv.usermoduleUrl}${userId}`);
+  const userBody = user.data.data;
+  let recomendedActionCompleted = userBody.recomendedActionComplete;
+
+  // eslint-disable-next-line no-plusplus
+  recomendedActionCompleted++;
+  // eslint-disable-next-line camelcase
+  await axios.patch(`${devenv.usermoduleUrl}${userId}`, {
+    recomendedActionComplete: recomendedActionCompleted,
+  });
   await actionsteps.save();
+
   const actionStepsUpdate = await ActionStep.findOne({
     _id: actionsteps._id,
   }).populate([
@@ -257,6 +270,10 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
 
   // eslint-disable-next-line camelcase
   const user_id = req.body.userId;
+  // eslint-disable-next-line camelcase
+  const user = await axios.get(`${devenv.usermoduleUrl}${user_id}`);
+  const userBody = user.data.data;
+  let recomendedActionAssign = userBody.recomendedActionAssigned;
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
@@ -265,12 +282,23 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       (e) => e.userId === user_id
     );
     if (isUserExist) {
+      // eslint-disable-next-line camelcase
+      await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
+        recomendedActionAssigned: recomendedActionAssign,
+      });
+
       res.status(200).json({
         success: true,
         message: "actionsteps updated by user",
         data: actionstep,
       });
     } else {
+      // eslint-disable-next-line no-plusplus
+      recomendedActionAssign++;
+      // eslint-disable-next-line camelcase
+      await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
+        recomendedActionAssigned: recomendedActionAssign,
+      });
       // eslint-disable-next-line camelcase
       actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
       await actionstep.save();
