@@ -93,7 +93,21 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const response = await axios.patch(query, {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,
   });
+
+
+  // eslint-disable-next-line camelcase
+  const user = await axios.get(`${devenv.usermoduleUrl}${userId}`);
+  const userBody = user.data.data;
+  let recomendedActionCompleted = userBody.recomendedActionComplete;
+
+  // eslint-disable-next-line no-plusplus
+  recomendedActionCompleted++;
+  // eslint-disable-next-line camelcase
+  await axios.patch(`${devenv.usermoduleUrl}${userId}`, {
+    recomendedActionComplete: recomendedActionCompleted,
+  });
   await actionsteps.save();
+
   const actionStepsUpdate = await ActionStep.findOne({
     _id: actionsteps._id,
   }).populate([
@@ -258,6 +272,12 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   // eslint-disable-next-line camelcase
   const user_id = req.body.userId;
 
+  // eslint-disable-next-line camelcase
+  const user = await axios.get(`${devenv.usermoduleUrl}${user_id}`);
+  const userBody = user.data.data;
+  let recomendedActionAssign = userBody.recomendedActionAssigned;
+
+
   if (actionstep) {
     // eslint-disable-next-line camelcase
     const isUserExist = actionstep.assigned_user.some(
@@ -265,12 +285,23 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       (e) => e.userId === user_id
     );
     if (isUserExist) {
+      // eslint-disable-next-line camelcase
+      await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
+        recomendedActionAssigned: recomendedActionAssign,
+      });
+
       res.status(200).json({
         success: true,
         message: "actionsteps updated by user",
         data: actionstep,
       });
     } else {
+      // eslint-disable-next-line no-plusplus
+      recomendedActionAssign++;
+      // eslint-disable-next-line camelcase
+      await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
+        recomendedActionAssigned: recomendedActionAssign,
+      });
       // eslint-disable-next-line camelcase
       actionstep.assigned_user.push({ userId: user_id, attempted_steps: [] });
       await actionstep.save();
@@ -288,6 +319,48 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
     });
   }
 });
+const removeUserFromActionsteps = asyncHandler(async (req, res) => {
+  const actionstep = await ActionStep.findById(req.params.id).populate([
+    "categoryId",
+    "costId",
+    "potentialId",
+    "timescaleId",
+    "answerRelationshipId",
+    "status",
+    "steps",
+    "resourcelinkId",
+    {
+      path: "assigned_user.attempted_steps",
+      model: "Steps",
+    },
+  ]);
+
+  if (!actionstep) {
+    // Handle the case where the ActionStep is not found
+    return res.status(404).json({ message: "ActionStep not found" });
+  }
+
+  const userIdToDelete = req.body.userId;
+
+  // Find the index of the entry with the specified userId
+  const indexToDelete = actionstep.assigned_user.findIndex(
+    (user) => user.userId === userIdToDelete
+  );
+
+  // Remove the entry from the assigned_user array
+  if (indexToDelete !== -1) {
+    actionstep.assigned_user.splice(indexToDelete, 1);
+  }
+
+  // Save the updated ActionStep
+  const updatedActionStep = await actionstep.save();
+  res.status(200).json({
+    success: true,
+    message: "remove user from action steps",
+    data: updatedActionStep,
+  });
+});
+
 const getactionStepByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.find({
     "assigned_user.userId": req.params.id,
@@ -715,4 +788,5 @@ module.exports = {
   getTimeSpendByCategory,
   getactionUpdateByUser,
   updateStepsByUser,
+  removeUserFromActionsteps,
 };

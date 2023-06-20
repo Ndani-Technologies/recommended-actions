@@ -23,6 +23,9 @@ actionstepRouter
 
   .patch(actionstepController.getactionUpdateByUser);
 actionstepRouter
+  .route("/remove/UserfromRA/:id")
+  .patch(actionstepController.removeUserFromActionsteps);
+actionstepRouter
   .route("/update/stepsave/ByUser/:raId")
   .patch(actionstepController.updateStepsByUser);
 actionstepRouter

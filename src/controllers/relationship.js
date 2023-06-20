@@ -99,7 +99,6 @@ const getRelationships = asyncHandler(async (req, res, next) => {
 //     recomendedActionId
 //   }
 //   const relationship = await RelationShip.create(body);
-//   console.log("body", relationship, body)
 //   if (relationship) {
 //     res.status(200).json({
 //       success: true,
@@ -172,7 +171,6 @@ const createRelationship = asyncHandler(async (req, res, next) => {
           },
         ],
       });
-    console.log("relationship", recomendedActionId);
 
     if (relationship) {
       res.status(200).json({
@@ -187,7 +185,6 @@ const createRelationship = asyncHandler(async (req, res, next) => {
     }
   } catch (error) {
     // Handle any error that occurred during the process
-    console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
@@ -242,17 +239,13 @@ const updateRelationship = asyncHandler(async (req, res, next) => {
                 model: "timescale",
                 // select: 'language includeExplanation answerAttempt'
               },
-              {
-                path: "weightId",
-                model: "weight",
-                // select: 'language includeExplanation answerAttempt'
-              },
             ],
           });
         await redisClient.set(cacheKey, JSON.stringify(allRelationships));
         res.status(200).json({
           success: true,
           message: `relationship updated successfully`,
+          data: allRelationships,
         });
       } else {
         res
