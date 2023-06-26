@@ -72,6 +72,7 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   // eslint-disable-next-line prefer-const
   let userIndex = users.findIndex((user) => user.userId === userId);
   actionsteps.assigned_user[userIndex].attempted_steps = steps._id;
+  actionsteps.assigned_user[userIndex].step_score = 0;
   steps.forEach(async (stepUpdate) => {
     const stepBody = {
       _id: stepUpdate._id,
@@ -93,7 +94,6 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const response = await axios.patch(query, {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,
   });
-
 
   // eslint-disable-next-line camelcase
   const user = await axios.get(`${devenv.usermoduleUrl}${userId}`);
@@ -276,7 +276,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   const user = await axios.get(`${devenv.usermoduleUrl}${user_id}`);
   const userBody = user.data.data;
   let recomendedActionAssign = userBody.recomendedActionAssigned;
-
 
   if (actionstep) {
     // eslint-disable-next-line camelcase
