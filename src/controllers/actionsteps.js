@@ -293,6 +293,8 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       (e) => e.userId === user_id
     );
     if (isUserExist) {
+      // eslint-disable-next-line no-plusplus
+      recomendedActionAssign++;
       // eslint-disable-next-line camelcase
       await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
         recomendedActionAssigned: recomendedActionAssign,
