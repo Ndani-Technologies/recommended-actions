@@ -69,6 +69,7 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.findById(req.params.raId);
   const { userId, steps } = req.body;
   let users = actionsteps.assigned_user;
+  let progress = true;
   // eslint-disable-next-line prefer-const
   let userIndex = users.findIndex((user) => user.userId === userId);
   actionsteps.assigned_user[userIndex].attempted_steps = steps._id;
@@ -83,6 +84,9 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
     if (stepUpdate.isCompleted === true) {
       actionsteps.assigned_user[userIndex].step_score += stepUpdate.score;
     }
+    if (stepUpdate.isCompleted === false) {
+      progress = false;
+    }
     if (Array.isArray(actionsteps.assigned_user[userIndex].attempted_steps)) {
       actionsteps.assigned_user[userIndex].attempted_steps.push(stepUpdate._id);
     } else {
@@ -90,6 +94,11 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
     }
     await Step.findByIdAndUpdate(stepUpdate._id, { $set: stepBody });
   });
+  if (progress === true) {
+    actionsteps.assigned_user[userIndex].progress = "complete";
+  } else {
+    actionsteps.assigned_user[userIndex].progress = "In Progress";
+  }
   const query = `${devenv.usermoduleUrl}${userId}`;
   const response = await axios.patch(query, {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,

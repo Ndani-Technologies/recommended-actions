@@ -6,10 +6,15 @@ const ResourceLinkSchema = new mongoose.Schema({
     enum: ["English", "Spanish", "Arabic", "French"],
     default: "English",
   },
-  title: {
+  linkText: {
     type: String,
-
+  },
+  linkUrl: {
+    type: String,
+  },
+  target: {
+    type: String,
   },
 });
-const Category = mongoose.model("resource_link", ResourceLinkSchema);
-module.exports = Category;
+const ResourceLink = mongoose.model("resource_link", ResourceLinkSchema);
+module.exports = ResourceLink;
