@@ -69,9 +69,11 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
   const actionsteps = await ActionStep.findById(req.params.raId);
   const { userId, steps } = req.body;
   let users = actionsteps.assigned_user;
+  let progress = true;
   // eslint-disable-next-line prefer-const
   let userIndex = users.findIndex((user) => user.userId === userId);
   actionsteps.assigned_user[userIndex].attempted_steps = steps._id;
+  actionsteps.assigned_user[userIndex].step_score = 0;
   steps.forEach(async (stepUpdate) => {
     const stepBody = {
       _id: stepUpdate._id,
@@ -82,6 +84,9 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
     if (stepUpdate.isCompleted === true) {
       actionsteps.assigned_user[userIndex].step_score += stepUpdate.score;
     }
+    if (stepUpdate.isCompleted === false) {
+      progress = false;
+    }
     if (Array.isArray(actionsteps.assigned_user[userIndex].attempted_steps)) {
       actionsteps.assigned_user[userIndex].attempted_steps.push(stepUpdate._id);
     } else {
@@ -89,11 +94,15 @@ const updateStepsByUser = asyncHandler(async (req, res) => {
     }
     await Step.findByIdAndUpdate(stepUpdate._id, { $set: stepBody });
   });
+  if (progress === true) {
+    actionsteps.assigned_user[userIndex].progress = "complete";
+  } else {
+    actionsteps.assigned_user[userIndex].progress = "In Progress";
+  }
   const query = `${devenv.usermoduleUrl}${userId}`;
   const response = await axios.patch(query, {
     actionPoints: actionsteps.assigned_user[userIndex].step_score,
   });
-
 
   // eslint-disable-next-line camelcase
   const user = await axios.get(`${devenv.usermoduleUrl}${userId}`);
@@ -277,7 +286,6 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
   const userBody = user.data.data;
   let recomendedActionAssign = userBody.recomendedActionAssigned;
 
-
   if (actionstep) {
     // eslint-disable-next-line camelcase
     const isUserExist = actionstep.assigned_user.some(
@@ -285,6 +293,8 @@ const getactionUpdateByUser = asyncHandler(async (req, res) => {
       (e) => e.userId === user_id
     );
     if (isUserExist) {
+      // eslint-disable-next-line no-plusplus
+      recomendedActionAssign++;
       // eslint-disable-next-line camelcase
       await axios.patch(`${devenv.usermoduleUrl}${user_id}`, {
         recomendedActionAssigned: recomendedActionAssign,
